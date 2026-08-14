@@ -1,0 +1,40 @@
+{
+  "name": "jarvis",
+  "version": "0.1.0",
+  "description": "JARVIS AI Desktop Environment for Windows",
+  "main": "dist-electron/main/index.js",
+  "author": "JARVIS Engineering",
+  "license": "MIT",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development concurrently -k -p \"[{name}]\" -n \"Vite,Electron\" -c \"cyan.bold,yellow.bold\" \"npm run dev:vite\" \"npm run dev:electron\"",
+    "dev:vite": "vite",
+    "dev:electron": "wait-on tcp:5173 && electron dist-electron/main/index.js",
+    "build:renderer": "tsc && vite build",
+    "build:electron": "tsc -p tsconfig.node.json",
+    "build": "npm run build:electron && npm run build:renderer",
+    "package:dir": "npm run build && electron-builder --dir",
+    "package:installer": "npm run build && electron-builder",
+    "clean": "rimraf dist dist-electron release"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "wait-on": "^8.0.2"
+  }
+}
