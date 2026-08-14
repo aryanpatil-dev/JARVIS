@@ -12,8 +12,8 @@
     "build:renderer": "tsc && vite build",
     "build:electron": "tsc -p tsconfig.node.json",
     "build": "npm run build:electron && npm run build:renderer",
-    "package:dir": "npm run build && electron-builder --dir",
-    "package:installer": "npm run build && electron-builder",
+    "package:dir": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && electron-builder --dir -c.win.sign=null",
+    "package:installer": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && electron-builder -c.win.sign=null",
     "clean": "rimraf dist dist-electron release"
   },
   "dependencies": {

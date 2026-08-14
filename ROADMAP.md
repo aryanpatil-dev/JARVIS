@@ -6,17 +6,17 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
 
 ## 🗺️ Phase Overview
 
-- [ ] **Phase 1: Desktop Foundation** *(CURRENT FOCUS)*
+- [x] **Phase 1: Desktop Foundation** *(COMPLETED)*
   - [x] Step 1.1: Architecture & Framework Selection (`docs/ARCHITECTURE.md`)
-  - [ ] Step 1.2: Project Scaffolding & Build Tooling
-  - [ ] Step 1.3: Frameless Window & Obsidian Tactical UI Theme
-  - [ ] Step 1.4: Cinematic ASCII Diagnostic Startup Boot Sequence
-  - [ ] Step 1.5: Core Workspace Shell & Raycast Command Center (`Ctrl+K`)
-  - [ ] Step 1.6: Settings & Secure Credential Store
-  - [ ] Step 1.7: Production Build Pipeline & Standalone Portable Packaging (`release/JARVIS/`)
-  - [ ] Step 1.8: Phase 1 Checkpoint & Verification (`docs/checkpoints/PHASE-01.md`)
+  - [x] Step 1.2: Project Scaffolding & Build Tooling
+  - [x] Step 1.3: Frameless Window & Obsidian Tactical UI Theme
+  - [x] Step 1.4: Cinematic ASCII Diagnostic Startup Boot Sequence
+  - [x] Step 1.5: Core Workspace Shell & Raycast Command Center (`Ctrl+K`)
+  - [x] Step 1.6: Settings & Secure Credential Store
+  - [x] Step 1.7: Production Build Pipeline & Standalone Portable Packaging (`release/JARVIS/`)
+  - [x] Step 1.8: Phase 1 Checkpoint & Verification (`docs/checkpoints/PHASE-01.md`)
 
-- [ ] **Phase 2: Core Environment & Subsystems**
+- [ ] **Phase 2: Core Environment & Subsystems** *(NEXT)*
   - [ ] Real Pseudo-Terminal (PTY) Execution & xterm.js streaming
   - [ ] Workspace Manager & Session Persistence
   - [ ] Dockable Tiling Panel Layout Engine

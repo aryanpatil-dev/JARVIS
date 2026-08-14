@@ -1,6 +1,7 @@
 appId: com.jarvis.desktop
 productName: JARVIS
 copyright: Copyright © 2026 JARVIS
+forceCodeSigning: false
 directories:
   output: release
   buildResources: build
@@ -9,18 +10,10 @@ files:
   - "dist-electron/**/*"
   - "package.json"
 win:
+  sign: null
+  signAndEditExecutable: false
   target:
     - target: dir
       arch:
         - x64
-    - target: nsis
-      arch:
-        - x64
   executableName: JARVIS
-nsis:
-  oneClick: false
-  allowToChangeInstallationDirectory: true
-  createDesktopShortcut: true
-  createStartMenuShortcut: true
-  shortcutName: JARVIS
-  artifactName: "${productName}-Setup.${ext}"
