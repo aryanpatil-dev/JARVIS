@@ -75,7 +75,7 @@ JARVIS enforces 3 explicit runtime security tiers:
 If you discover a security vulnerability in JARVIS, please report it responsibly:
 
 - **Do NOT** open a public issue.
-- Email your findings directly to the maintainer at `aryanpatil.dev@gmail.com` with:
+- Email your findings directly to the maintainer at `aryanspatilin@gmail.com` with:
   - Description of the vulnerability
   - Steps to reproduce
   - Potential impact assessment
