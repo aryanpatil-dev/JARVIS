@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Terminal, Cpu, HardDrive, Shield, Activity, Sparkles, Layers, Search } from 'lucide-react';
 import type { SystemMetrics } from './types/electron';
 

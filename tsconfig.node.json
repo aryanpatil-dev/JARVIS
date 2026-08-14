@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,
+    "types": ["node"],
     "outDir": "dist-electron",
     "baseUrl": ".",
     "paths": {
