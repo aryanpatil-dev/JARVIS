@@ -52,6 +52,14 @@ export const IPC_CHANNELS = {
     RUN_TASK: 'agent:runTask',
     TASK_UPDATE: 'agent:taskUpdate',
   },
+  MEMORY: {
+    GET_SESSIONS: 'memory:getSessions',
+    SAVE_SESSION: 'memory:saveSession',
+    DELETE_SESSION: 'memory:deleteSession',
+    GET_ENTRIES: 'memory:getEntries',
+    SAVE_ENTRY: 'memory:saveEntry',
+    DELETE_ENTRY: 'memory:deleteEntry',
+  },
 } as const;
 
 export interface ProcessInfo {
@@ -86,8 +94,18 @@ export interface DetailedSystemStats {
 
 export interface WorkspaceState {
   activeWorkspaceId: string;
-  openPanels: ('terminal' | 'filesystem' | 'telemetry' | 'ai' | 'agents')[];
-  activeTab: 'overview' | 'terminal' | 'filesystem' | 'telemetry' | 'ai' | 'agents' | 'split-term-fs' | 'split-term-telem' | 'split-ai-term';
+  openPanels: ('terminal' | 'filesystem' | 'telemetry' | 'ai' | 'agents' | 'memory')[];
+  activeTab:
+    | 'overview'
+    | 'terminal'
+    | 'filesystem'
+    | 'telemetry'
+    | 'ai'
+    | 'agents'
+    | 'memory'
+    | 'split-term-fs'
+    | 'split-term-telem'
+    | 'split-ai-term';
   currentPath: string;
   terminalSessions: { id: string; name: string }[];
 }
@@ -135,4 +153,22 @@ export interface AgentTask {
   startTime: number;
   endTime?: number;
   finalSummary?: string;
+}
+
+export interface ProjectMemoryEntry {
+  id: string;
+  workspaceId: string;
+  key: string;
+  content: string;
+  category: 'architecture' | 'task' | 'preference' | 'snippet';
+  timestamp: number;
+}
+
+export interface StoredSession {
+  id: string;
+  title: string;
+  workspaceId: string;
+  messages: ChatMessage[];
+  createdAt: number;
+  updatedAt: number;
 }

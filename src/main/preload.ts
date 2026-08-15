@@ -8,6 +8,8 @@ import {
   ToolCallEvent,
   AgentPersona,
   AgentTask,
+  ProjectMemoryEntry,
+  StoredSession,
 } from '../shared/ipc-channels';
 
 const jarvisAPI = {
@@ -102,6 +104,22 @@ const jarvisAPI = {
         ipcRenderer.removeListener(IPC_CHANNELS.AGENT.TASK_UPDATE, subscription);
       };
     },
+  },
+  memory: {
+    getSessions: (workspaceId?: string): Promise<StoredSession[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.MEMORY.GET_SESSIONS, workspaceId),
+    saveSession: (session: StoredSession): Promise<boolean> =>
+      ipcRenderer.invoke(IPC_CHANNELS.MEMORY.SAVE_SESSION, session),
+    deleteSession: (sessionId: string): Promise<boolean> =>
+      ipcRenderer.invoke(IPC_CHANNELS.MEMORY.DELETE_SESSION, sessionId),
+    getEntries: (workspaceId?: string): Promise<ProjectMemoryEntry[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.MEMORY.GET_ENTRIES, workspaceId),
+    saveEntry: (
+      entry: Omit<ProjectMemoryEntry, 'id' | 'timestamp'>
+    ): Promise<ProjectMemoryEntry> =>
+      ipcRenderer.invoke(IPC_CHANNELS.MEMORY.SAVE_ENTRY, entry),
+    deleteEntry: (memoryId: string): Promise<boolean> =>
+      ipcRenderer.invoke(IPC_CHANNELS.MEMORY.DELETE_ENTRY, memoryId),
   },
   config: {
     get: (key: string) => ipcRenderer.invoke(IPC_CHANNELS.CONFIG.GET, key),

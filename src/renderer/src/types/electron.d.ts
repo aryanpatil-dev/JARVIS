@@ -7,6 +7,8 @@ import {
   ChatMessage,
   AgentPersona,
   AgentTask,
+  ProjectMemoryEntry,
+  StoredSession,
 } from '../../shared/ipc-channels';
 
 export type {
@@ -18,6 +20,8 @@ export type {
   ChatMessage,
   AgentPersona,
   AgentTask,
+  ProjectMemoryEntry,
+  StoredSession,
 };
 
 export interface SystemMetrics {
@@ -75,6 +79,14 @@ export interface IJarvisAPI {
     getPersonas: () => Promise<AgentPersona[]>;
     runTask: (agentType: string, prompt: string) => Promise<string>;
     onTaskUpdate: (callback: (task: AgentTask) => void) => () => void;
+  };
+  memory: {
+    getSessions: (workspaceId?: string) => Promise<StoredSession[]>;
+    saveSession: (session: StoredSession) => Promise<boolean>;
+    deleteSession: (sessionId: string) => Promise<boolean>;
+    getEntries: (workspaceId?: string) => Promise<ProjectMemoryEntry[]>;
+    saveEntry: (entry: Omit<ProjectMemoryEntry, 'id' | 'timestamp'>) => Promise<ProjectMemoryEntry>;
+    deleteEntry: (memoryId: string) => Promise<boolean>;
   };
   config: {
     get: (key: string) => Promise<unknown>;

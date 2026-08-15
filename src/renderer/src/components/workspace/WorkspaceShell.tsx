@@ -10,6 +10,7 @@ import {
   Columns,
   Sparkles,
   Bot,
+  Database,
 } from 'lucide-react';
 import { DockableLayout, ViewMode } from './DockableLayout';
 import type { SystemMetrics } from '../../types/electron';
@@ -33,7 +34,7 @@ export const WorkspaceShell = ({
 }: WorkspaceShellProps) => {
   const [activeWorkspace, setActiveWorkspace] = useState('Core');
   const [workspaces, setWorkspaces] = useState([
-    { id: 'Core', name: 'Core Workspace', count: '5 Subsystems' },
+    { id: 'Core', name: 'Core Workspace', count: '6 Subsystems' },
     { id: 'Dev', name: 'Development', count: 'React, Node, Git' },
     { id: 'Research', name: 'AI & Research', count: 'Docs, Notes' },
   ]);
@@ -95,7 +96,8 @@ export const WorkspaceShell = ({
                   background: 'transparent',
                   border: 'none',
                   color: '#64748b',
-                  cursor: 'padding',
+                  cursor: 'pointer',
+                  padding: '2px',
                 }}
               >
                 <Plus size={12} />
@@ -156,6 +158,7 @@ export const WorkspaceShell = ({
                 { name: 'Matrix Overview', icon: <Columns size={13} />, mode: 'overview' },
                 { name: 'AI Studio', icon: <Sparkles size={13} color="#f59e0b" />, mode: 'ai' },
                 { name: 'Agent Hub', icon: <Bot size={13} color="#38bdf8" />, mode: 'agents' },
+                { name: 'Memory Vault', icon: <Database size={13} color="#c084fc" />, mode: 'memory' },
                 { name: 'PTY Terminal', icon: <Terminal size={13} />, mode: 'terminal' },
                 { name: 'File Explorer', icon: <FolderTree size={13} />, mode: 'filesystem' },
                 { name: 'Hardware Telemetry', icon: <Cpu size={13} />, mode: 'telemetry' },
@@ -222,7 +225,7 @@ export const WorkspaceShell = ({
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
             <Activity size={12} color="#38bdf8" />
-            <span>JARVIS AGENTS: READY</span>
+            <span>JARVIS MEMORY: PERSISTENT</span>
           </div>
         </div>
       </aside>

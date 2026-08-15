@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2026-08-15
+
+### Added
+- **Durable Conversation Store**: Session persistence service saving all conversation threads and tool call logs to `%APPDATA%\jarvis\memory\sessions.json`.
+- **Project Knowledge Vault**: Categorized knowledge and context engine (Architecture, Tasks, Preferences, Snippets) stored in `%APPDATA%\jarvis\memory\project-memory.json`.
+- **Memory & Knowledge Vault Panel**: Interactive UI for managing memories, viewing past conversations, and keyword searching across records.
+- **Dockable Views & Navigation**: Added Memory Vault into DockableLayout, WorkspaceShell, global hotkey `Ctrl+4`, and Command Palette.
+- **Phase 6 Checkpoint**: Documented milestone in `docs/checkpoints/PHASE-06.md`.
+
 ## [0.5.0] - 2026-08-15
 
 ### Added

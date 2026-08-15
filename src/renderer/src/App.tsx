@@ -20,6 +20,7 @@ import {
   Sparkles,
   Bot,
   Mic,
+  Database,
 } from 'lucide-react';
 import type { SystemMetrics } from './types/electron';
 
@@ -54,7 +55,6 @@ export default function App() {
 
   // Voice transcript handler
   const handleVoiceTranscript = useCallback((text: string) => {
-    // Switch to AI Studio and send prompt
     setActiveView('ai');
     if (window.jarvisAPI?.ai) {
       window.jarvisAPI.ai.prompt(text);
@@ -100,14 +100,19 @@ export default function App() {
       if ((e.ctrlKey || e.metaKey) && e.key === '4') {
         e.preventDefault();
         soundEffects.playClick();
-        setActiveView('terminal');
+        setActiveView('memory');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '5') {
         e.preventDefault();
         soundEffects.playClick();
-        setActiveView('filesystem');
+        setActiveView('terminal');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '6') {
+        e.preventDefault();
+        soundEffects.playClick();
+        setActiveView('filesystem');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '7') {
         e.preventDefault();
         soundEffects.playClick();
         setActiveView('telemetry');
@@ -146,6 +151,14 @@ export default function App() {
         action: () => setActiveView('agents'),
       },
       {
+        id: 'view-memory',
+        title: 'Focus View: Memory & Knowledge Vault',
+        category: 'Workspace',
+        shortcut: 'Ctrl+4',
+        icon: <Database size={14} color="#c084fc" />,
+        action: () => setActiveView('memory'),
+      },
+      {
         id: 'toggle-mic',
         title: 'Toggle Voice Microphone Listening',
         category: 'System',
@@ -157,7 +170,7 @@ export default function App() {
         id: 'view-terminal',
         title: 'Focus View: PTY Terminal Console',
         category: 'Terminal',
-        shortcut: 'Ctrl+4',
+        shortcut: 'Ctrl+5',
         icon: <Terminal size={14} />,
         action: () => setActiveView('terminal'),
       },
@@ -165,7 +178,7 @@ export default function App() {
         id: 'view-filesystem',
         title: 'Focus View: File Explorer Matrix',
         category: 'Workspace',
-        shortcut: 'Ctrl+5',
+        shortcut: 'Ctrl+6',
         icon: <FolderTree size={14} />,
         action: () => setActiveView('filesystem'),
       },
@@ -173,7 +186,7 @@ export default function App() {
         id: 'view-telemetry',
         title: 'Focus View: Hardware Telemetry & Processes',
         category: 'System',
-        shortcut: 'Ctrl+6',
+        shortcut: 'Ctrl+7',
         icon: <Cpu size={14} />,
         action: () => setActiveView('telemetry'),
       },

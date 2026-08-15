@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import os from 'os';
-import { IPC_CHANNELS } from '../shared/ipc-channels';
+import { IPC_CHANNELS, StoredSession, ProjectMemoryEntry } from '../shared/ipc-channels';
 import { TerminalService } from './services/terminal.service';
 import { FilesystemService } from './services/filesystem.service';
 import { TelemetryService } from './services/telemetry.service';
@@ -9,6 +9,7 @@ import { WorkspaceService } from './services/workspace.service';
 import { ToolsService } from './services/tools.service';
 import { AIService } from './services/ai.service';
 import { AgentService } from './services/agent.service';
+import { MemoryService } from './services/memory.service';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -18,6 +19,7 @@ const terminalService = new TerminalService();
 const filesystemService = new FilesystemService();
 const telemetryService = new TelemetryService();
 const workspaceService = new WorkspaceService();
+const memoryService = new MemoryService();
 const toolsService = new ToolsService(filesystemService, telemetryService);
 const aiService = new AIService(toolsService);
 const agentService = new AgentService(toolsService, aiService);
@@ -191,6 +193,34 @@ ipcMain.handle(
     return agentService.runAgentTask(agentType, prompt);
   }
 );
+
+// Memory & Knowledge Subsystem
+ipcMain.handle(IPC_CHANNELS.MEMORY.GET_SESSIONS, (_e, workspaceId?: string) => {
+  return memoryService.getSessions(workspaceId);
+});
+
+ipcMain.handle(IPC_CHANNELS.MEMORY.SAVE_SESSION, (_e, session: StoredSession) => {
+  return memoryService.saveSession(session);
+});
+
+ipcMain.handle(IPC_CHANNELS.MEMORY.DELETE_SESSION, (_e, sessionId: string) => {
+  return memoryService.deleteSession(sessionId);
+});
+
+ipcMain.handle(IPC_CHANNELS.MEMORY.GET_ENTRIES, (_e, workspaceId?: string) => {
+  return memoryService.getProjectMemories(workspaceId);
+});
+
+ipcMain.handle(
+  IPC_CHANNELS.MEMORY.SAVE_ENTRY,
+  (_e, entry: Omit<ProjectMemoryEntry, 'id' | 'timestamp'>) => {
+    return memoryService.saveProjectMemory(entry);
+  }
+);
+
+ipcMain.handle(IPC_CHANNELS.MEMORY.DELETE_ENTRY, (_e, memoryId: string) => {
+  return memoryService.deleteProjectMemory(memoryId);
+});
 
 app.whenReady().then(() => {
   createWindow();

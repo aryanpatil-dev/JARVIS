@@ -45,13 +45,17 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
   - [x] Fullscreen launch & sleek window controls
   - [x] Direct Gemini API Key credential configuration
 
-- [ ] **Phase 6: Memory & Workspaces** *(NEXT)*
-  - [ ] Short-Term & Long-Term Conversation Memory
-  - [ ] Workspace Project Context & Knowledge Graph
-  - [ ] Persistent User Preferences & Durable Snapshots
-  - [ ] Layout State Restoration
+- [x] **Phase 6: Memory & Workspaces** *(COMPLETED)*
+  - [x] Short-Term & Long-Term Conversation Memory
+  - [x] Workspace Project Context & Knowledge Vault
+  - [x] Persistent User Preferences & Durable Memory Engine
+  - [x] Memory & Knowledge Hub UI Panel
 
-- [ ] **Phase 6: Windows Integration & CLI**
+- [ ] **Phase 7: Windows Integration & CLI** *(NEXT)*
+  - [ ] Global Windows Hotkey Daemon (`Win+J`)
+  - [ ] System Tray Icon with Status Context Menu
+  - [ ] Native Windows OS Toast Notifications
+  - [ ] Standalone CLI Bridge & Scripting Utility
   - [ ] Global Focus Hotkey (`Ctrl + Space`)
   - [ ] Windows System Tray & Notifications
   - [ ] Global `jarvis` CLI Launcher in Windows Terminal
