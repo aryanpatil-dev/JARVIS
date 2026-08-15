@@ -16,6 +16,12 @@ build/
 .env.local
 .env.*.local
 *.enc
+*.pem
+*.key
+*.pfx
+ai-config.json
+secrets.json
+memory/
 
 # IDE & OS files
 .vscode/
