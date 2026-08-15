@@ -9,6 +9,7 @@
     "dev": "cross-env NODE_ENV=development concurrently -k -p \"[{name}]\" -n \"Vite,Electron\" -c \"cyan.bold,yellow.bold\" \"npm run dev:vite\" \"npm run dev:electron\"",
     "dev:vite": "vite",
     "dev:electron": "wait-on tcp:5173 && electron dist-electron/main/index.js",
+    "start": "electron .",
     "build:renderer": "tsc && vite build",
     "build:electron": "tsc -p tsconfig.node.json",
     "build": "npm run build:electron && npm run build:renderer",
