@@ -2,15 +2,24 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import os from 'os';
 import { IPC_CHANNELS } from '../shared/ipc-channels';
+import { TerminalService } from './services/terminal.service';
+import { FilesystemService } from './services/filesystem.service';
+import { TelemetryService } from './services/telemetry.service';
+import { WorkspaceService } from './services/workspace.service';
 
 let mainWindow: BrowserWindow | null = null;
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
+const terminalService = new TerminalService();
+const filesystemService = new FilesystemService();
+const telemetryService = new TelemetryService();
+const workspaceService = new WorkspaceService();
+
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1360,
-    height: 840,
+    width: 1440,
+    height: 900,
     minWidth: 1024,
     minHeight: 640,
     frame: false,
@@ -25,6 +34,8 @@ function createWindow() {
     show: false,
   });
 
+  terminalService.setWindow(mainWindow);
+
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
     // mainWindow.webContents.openDevTools({ mode: 'detach' });
@@ -37,11 +48,12 @@ function createWindow() {
   });
 
   mainWindow.on('closed', () => {
+    terminalService.killAll();
     mainWindow = null;
   });
 }
 
-// Window IPC handlers
+// Window state IPC handlers
 ipcMain.handle(IPC_CHANNELS.WINDOW.MINIMIZE, () => {
   mainWindow?.minimize();
 });
@@ -76,6 +88,71 @@ ipcMain.handle(IPC_CHANNELS.SYSTEM.GET_METRICS, () => {
     arch: process.arch,
     uptimeSeconds: os.uptime(),
   };
+});
+
+ipcMain.handle(IPC_CHANNELS.SYSTEM.GET_DETAILED_STATS, () => {
+  return telemetryService.getDetailedStats();
+});
+
+ipcMain.handle(IPC_CHANNELS.SYSTEM.GET_PROCESSES, async () => {
+  return telemetryService.getProcesses();
+});
+
+ipcMain.handle(IPC_CHANNELS.SYSTEM.KILL_PROCESS, async (_e, pid: number) => {
+  return telemetryService.killProcess(pid);
+});
+
+// Terminal IPC handlers
+ipcMain.handle(
+  IPC_CHANNELS.TERMINAL.CREATE,
+  (_e, { id, customCwd, customShell }: { id: string; customCwd?: string; customShell?: string }) => {
+    return terminalService.createSession(id, customCwd, customShell);
+  }
+);
+
+ipcMain.handle(IPC_CHANNELS.TERMINAL.INPUT, (_e, { id, data }: { id: string; data: string }) => {
+  return terminalService.writeInput(id, data);
+});
+
+ipcMain.handle(IPC_CHANNELS.TERMINAL.KILL, (_e, { id }: { id: string }) => {
+  return terminalService.killSession(id);
+});
+
+// Filesystem IPC handlers
+ipcMain.handle(IPC_CHANNELS.FILESYSTEM.GET_ROOTS, () => {
+  return filesystemService.getRoots();
+});
+
+ipcMain.handle(IPC_CHANNELS.FILESYSTEM.READ_DIR, (_e, dirPath: string) => {
+  return filesystemService.readDirectory(dirPath);
+});
+
+ipcMain.handle(IPC_CHANNELS.FILESYSTEM.READ_FILE, (_e, filePath: string) => {
+  return filesystemService.readFileContent(filePath);
+});
+
+ipcMain.handle(
+  IPC_CHANNELS.FILESYSTEM.WRITE_FILE,
+  (_e, { filePath, content }: { filePath: string; content: string }) => {
+    return filesystemService.writeFileContent(filePath, content);
+  }
+);
+
+ipcMain.handle(IPC_CHANNELS.FILESYSTEM.CREATE_DIR, (_e, dirPath: string) => {
+  return filesystemService.createDirectory(dirPath);
+});
+
+ipcMain.handle(IPC_CHANNELS.FILESYSTEM.DELETE, (_e, targetPath: string) => {
+  return filesystemService.deleteItem(targetPath);
+});
+
+// Workspace State Persistence
+ipcMain.handle(IPC_CHANNELS.WORKSPACE.GET_STATE, () => {
+  return workspaceService.getState();
+});
+
+ipcMain.handle(IPC_CHANNELS.WORKSPACE.SAVE_STATE, (_e, state) => {
+  return workspaceService.saveState(state);
 });
 
 app.whenReady().then(() => {

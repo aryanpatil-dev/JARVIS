@@ -1,10 +1,21 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Titlebar } from './components/titlebar/Titlebar';
 import { BootSequence } from './components/boot/BootSequence';
 import { CommandPalette, CommandItem } from './components/command/CommandPalette';
 import { SettingsModal } from './components/settings/SettingsModal';
 import { WorkspaceShell } from './components/workspace/WorkspaceShell';
-import { Terminal, Settings, Shield, RefreshCw, Cpu, Layers, Power, Folder } from 'lucide-react';
+import { ViewMode } from './components/workspace/DockableLayout';
+import {
+  Terminal,
+  Settings,
+  Shield,
+  RefreshCw,
+  Cpu,
+  Power,
+  FolderTree,
+  Columns,
+  LayoutGrid,
+} from 'lucide-react';
 import type { SystemMetrics } from './types/electron';
 
 export default function App() {
@@ -16,6 +27,7 @@ export default function App() {
   const [scanlinesEnabled, setScanlinesEnabled] = useState(true);
   const [showBootSequenceSetting, setShowBootSequenceSetting] = useState(true);
   const [bootCompleted, setBootCompleted] = useState(false);
+  const [activeView, setActiveView] = useState<ViewMode>('overview');
 
   // Periodic Telemetry
   useEffect(() => {
@@ -48,23 +60,78 @@ export default function App() {
         e.preventDefault();
         setIsSettingsOpen((prev) => !prev);
       }
+      // Ctrl + 1, 2, 3, 4 -> Fast View Mode switching
+      if ((e.ctrlKey || e.metaKey) && e.key === '1') {
+        e.preventDefault();
+        setActiveView('overview');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '2') {
+        e.preventDefault();
+        setActiveView('terminal');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '3') {
+        e.preventDefault();
+        setActiveView('filesystem');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '4') {
+        e.preventDefault();
+        setActiveView('telemetry');
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Handler functions
-  const handleSubsystemSelect = useCallback((subsystem: string) => {
-    console.log(`Navigating to subsystem: ${subsystem}`);
-    if (subsystem === 'Terminal') {
-      setIsCommandPaletteOpen(true);
-    }
-  }, []);
-
   // Command Palette Items
   const commands: CommandItem[] = useMemo(
     () => [
+      {
+        id: 'view-overview',
+        title: 'Switch View: Matrix Overview',
+        category: 'Workspace',
+        shortcut: 'Ctrl+1',
+        icon: <LayoutGrid size={14} />,
+        action: () => setActiveView('overview'),
+      },
+      {
+        id: 'view-terminal',
+        title: 'Focus View: PTY Terminal Console',
+        category: 'Terminal',
+        shortcut: 'Ctrl+2',
+        icon: <Terminal size={14} />,
+        action: () => setActiveView('terminal'),
+      },
+      {
+        id: 'view-filesystem',
+        title: 'Focus View: File Explorer Matrix',
+        category: 'Workspace',
+        shortcut: 'Ctrl+3',
+        icon: <FolderTree size={14} />,
+        action: () => setActiveView('filesystem'),
+      },
+      {
+        id: 'view-telemetry',
+        title: 'Focus View: Hardware Telemetry & Processes',
+        category: 'System',
+        shortcut: 'Ctrl+4',
+        icon: <Cpu size={14} />,
+        action: () => setActiveView('telemetry'),
+      },
+      {
+        id: 'view-split-files',
+        title: 'Split View: Terminal + Filesystem',
+        category: 'Workspace',
+        icon: <Columns size={14} />,
+        action: () => setActiveView('split-term-fs'),
+      },
+      {
+        id: 'view-split-telemetry',
+        title: 'Split View: Terminal + Telemetry',
+        category: 'Workspace',
+        icon: <Columns size={14} />,
+        action: () => setActiveView('split-term-telem'),
+      },
       {
         id: 'open-settings',
         title: 'Open Settings Configuration',
@@ -83,38 +150,9 @@ export default function App() {
         },
       },
       {
-        id: 'switch-workspace-core',
-        title: 'Switch to Core Workspace',
-        category: 'Workspace',
-        icon: <Layers size={14} />,
-        action: () => console.log('Switched to Core'),
-      },
-      {
-        id: 'switch-workspace-dev',
-        title: 'Switch to Development Workspace',
-        category: 'Workspace',
-        icon: <Folder size={14} />,
-        action: () => console.log('Switched to Dev'),
-      },
-      {
-        id: 'open-terminal',
-        title: 'Spawn PTY Terminal Console',
-        category: 'Terminal',
-        shortcut: 'Ctrl+`',
-        icon: <Terminal size={14} />,
-        action: () => console.log('Spawning Terminal session'),
-      },
-      {
-        id: 'system-diagnostic',
-        title: 'Run Real-time System Diagnostics',
-        category: 'System',
-        icon: <Cpu size={14} />,
-        action: () => console.log('Running diagnostics'),
-      },
-      {
         id: 'replay-boot',
         title: 'Replay Cinematic Boot Sequence',
-        category: 'AI',
+        category: 'System',
         icon: <RefreshCw size={14} />,
         action: () => setBootCompleted(false),
       },
@@ -168,7 +206,8 @@ export default function App() {
         securityMode={securityMode}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onSelectSubsystem={handleSubsystemSelect}
+        activeView={activeView}
+        onViewChange={setActiveView}
       />
 
       {/* Raycast Command Palette Modal */}

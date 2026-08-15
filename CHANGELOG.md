@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-08-15
+
+### Added
+- **Real Pseudo-Terminal Subsystem**: Bidirectional streaming PTY process executor (PowerShell/CMD) wired to GPU-accelerated `xterm.js` with multi-tab session management.
+- **Filesystem Matrix Panel**: Interactive directory explorer with roots detection (`C:\`, `D:\`, `Home`), breadcrumbs, file search, and inline code preview drawer.
+- **Hardware Telemetry Engine**: Live delta-sampled per-core CPU load gauges, RAM meters, and active Windows Process Tree manager with memory sorting and process termination.
+- **Dockable Layout Engine**: Tiling workspace manager supporting Matrix Overview, Terminal Focus, File Focus, Telemetry Focus, and Dual Split modes.
+- **Workspace State Persistence**: Auto-save active panels and configuration to `%APPDATA%\jarvis\workspace-state.json`.
+- **Phase 2 Checkpoint**: Documented milestone in `docs/checkpoints/PHASE-02.md`.
+
 ## [0.1.0] - 2026-08-14
 
 ### Added

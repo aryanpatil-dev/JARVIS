@@ -16,14 +16,14 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
   - [x] Step 1.7: Production Build Pipeline & Standalone Portable Packaging (`release/JARVIS/`)
   - [x] Step 1.8: Phase 1 Checkpoint & Verification (`docs/checkpoints/PHASE-01.md`)
 
-- [ ] **Phase 2: Core Environment & Subsystems** *(NEXT)*
-  - [ ] Real Pseudo-Terminal (PTY) Execution & xterm.js streaming
-  - [ ] Workspace Manager & Session Persistence
-  - [ ] Dockable Tiling Panel Layout Engine
-  - [ ] Filesystem Explorer Matrix
-  - [ ] Live System Telemetry Engine (CPU, RAM, Processes)
+- [x] **Phase 2: Core Environment & Subsystems** *(COMPLETED)*
+  - [x] Real Pseudo-Terminal (PTY) Execution & xterm.js streaming
+  - [x] Workspace Manager & Session Persistence
+  - [x] Dockable Tiling Panel Layout Engine
+  - [x] Filesystem Explorer Matrix
+  - [x] Live System Telemetry Engine (CPU, RAM, Processes)
 
-- [ ] **Phase 3: AI Foundation & Tool Engine**
+- [ ] **Phase 3: AI Foundation & Tool Engine** *(NEXT)*
   - [ ] Gemini Provider & Token Streaming Engine
   - [ ] Structured Tool Abstraction (`filesystem.*`, `terminal.*`, `system.*`)
   - [ ] Permission Firewall (Safe / Normal / Power Modes)
