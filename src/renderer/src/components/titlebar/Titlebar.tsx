@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react';
-import {
-  Cpu,
-  Activity,
-  Settings,
-  Mic,
-  MicOff,
-  Volume2,
-  VolumeX,
-  Key,
-} from 'lucide-react';
-import type { SystemMetrics } from '../../types/electron';
+import { Shield } from 'lucide-react';
 import { VoiceWaveform } from '../voice/VoiceWaveform';
-import { voiceEngine, VoiceState } from '../../services/voice.service';
+import { voiceEngine } from '../../services/voice.service';
 import { soundEffects } from '../../services/sound.service';
+import { weatherService, WeatherData } from '../../services/weather.service';
+import type { SystemMetrics } from '../../types/electron';
 
 interface TitlebarProps {
   metrics: SystemMetrics | null;
@@ -20,20 +12,25 @@ interface TitlebarProps {
   onVoiceTranscript?: (text: string) => void;
 }
 
-export const Titlebar = ({ metrics, onOpenSettings, onVoiceTranscript }: TitlebarProps) => {
-  const [voiceState, setVoiceState] = useState<VoiceState>({
-    isListening: false,
-    isSpeaking: false,
-    transcript: '',
-    isSupported: true,
-    audioLevel: 0,
-  });
-  const [isTtsMuted, setIsTtsMuted] = useState(false);
-  const [hasApiKey, setHasApiKey] = useState(true);
+export const Titlebar = ({ onVoiceTranscript }: TitlebarProps) => {
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
 
+  // Weather & Location fetch
+  useEffect(() => {
+    weatherService.fetchLiveWeather().then((data) => setWeather(data));
+    const interval = setInterval(() => {
+      weatherService.fetchLiveWeather().then((data) => setWeather(data));
+    }, 600000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Voice listeners
   useEffect(() => {
     voiceEngine.onStateChange((state) => {
-      setVoiceState(state);
+      setIsListening(state.isListening);
+      setIsSpeaking(state.isSpeaking);
     });
 
     if (onVoiceTranscript) {
@@ -41,14 +38,6 @@ export const Titlebar = ({ metrics, onOpenSettings, onVoiceTranscript }: Titleba
         onVoiceTranscript(text);
       });
     }
-
-    const checkApiKey = async () => {
-      if (window.jarvisAPI?.ai) {
-        const configured = await window.jarvisAPI.ai.getKeyStatus();
-        setHasApiKey(configured);
-      }
-    };
-    checkApiKey();
   }, [onVoiceTranscript]);
 
   const handleMinimize = () => {
@@ -66,223 +55,144 @@ export const Titlebar = ({ metrics, onOpenSettings, onVoiceTranscript }: Titleba
     window.jarvisAPI?.window.close();
   };
 
-  const toggleMic = () => {
-    soundEffects.playClick();
-    voiceEngine.toggleListening();
-  };
-
-  const toggleTts = () => {
-    soundEffects.playClick();
-    const nextState = !isTtsMuted;
-    setIsTtsMuted(nextState);
-    voiceEngine.setTTSEnabled(!nextState);
-  };
-
   return (
     <header
-      className="drag-region"
       style={{
-        height: '38px',
-        backgroundColor: '#05070a',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 12px',
-        userSelect: 'none',
+        height: '44px',
+        padding: '0 18px',
+        backgroundColor: 'rgba(3, 7, 18, 0.95)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(0, 240, 255, 0.25)',
+        boxShadow: '0 4px 20px rgba(0, 240, 255, 0.08)',
         zIndex: 1000,
+        position: 'relative',
       }}
+      className="titlebar-drag-region"
     >
-      {/* Left: Brand + Status HUD */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className="no-drag">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-          <div
+      {/* Left: Stark / JARVIS Branding & System Status */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }} className="no-drag">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span
             style={{
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              backgroundColor: '#38bdf8',
-              boxShadow: '0 0 8px #38bdf8',
+              backgroundColor: '#00f0ff',
+              boxShadow: '0 0 12px #00f0ff',
             }}
           />
           <span
+            className="hud-glow"
             style={{
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.15em',
-              color: '#f8fafc',
+              fontSize: '13px',
+              fontWeight: 800,
+              letterSpacing: '0.22em',
+              color: '#00f0ff',
               fontFamily: 'var(--font-mono)',
             }}
           >
-            JARVIS // OS
+            STARK INDUSTRIES // JARVIS
           </span>
         </div>
 
-        {/* API Key Status Pill */}
-        {!hasApiKey && (
-          <button
-            onClick={onOpenSettings}
+        <span style={{ color: 'rgba(0, 240, 255, 0.3)', fontSize: '12px' }}>|</span>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+          <Shield size={12} color="#00f0ff" />
+          <span>SYS.VER 1.0 // ONLINE</span>
+        </div>
+      </div>
+
+      {/* Center: Audio Spectrum & Voice Waveform */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className="no-drag">
+        <VoiceWaveform isActive={isListening} isSpeaking={isSpeaking} />
+        {isListening && (
+          <span
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              backgroundColor: 'rgba(245, 158, 11, 0.15)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              borderRadius: '3px',
-              color: '#f59e0b',
-              padding: '2px 6px',
-              fontSize: '9px',
+              fontSize: '10px',
               fontFamily: 'var(--font-mono)',
-              cursor: 'pointer',
+              color: '#ef4444',
+              fontWeight: 700,
+              letterSpacing: '0.1em',
             }}
           >
-            <Key size={10} />
-            <span>ADD GEMINI KEY</span>
-          </button>
+            VOICE ACTIVE
+          </span>
         )}
       </div>
 
-      {/* Center: Live Voice Waveform & Voice Controls */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          backgroundColor: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
-          borderRadius: '4px',
-          padding: '2px 10px',
-        }}
-        className="no-drag"
-      >
-        {/* Mic Toggle Button */}
-        <button
-          onClick={toggleMic}
-          title={voiceState.isListening ? 'Mute Microphone' : 'Enable Voice Command'}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: voiceState.isListening ? '#10b981' : '#64748b',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '2px',
-          }}
-        >
-          {voiceState.isListening ? <Mic size={14} /> : <MicOff size={14} />}
-        </button>
-
-        {/* Dynamic Sinusoidal Waveform */}
-        <VoiceWaveform isActive={voiceState.isListening} isSpeaking={voiceState.isSpeaking} />
-
-        {/* TTS Audio Toggle */}
-        <button
-          onClick={toggleTts}
-          title={isTtsMuted ? 'Unmute JARVIS Voice' : 'Mute JARVIS Voice'}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: isTtsMuted ? '#64748b' : '#38bdf8',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '2px',
-          }}
-        >
-          {isTtsMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-        </button>
-      </div>
-
-      {/* Right: Telemetry Indicators + Sleek Window Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className="no-drag">
-        {metrics && (
+      {/* Right: Weather & Location Widget + Minimalist Window Controls */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} className="no-drag">
+        {weather && (
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              fontSize: '10px',
+              gap: '10px',
+              backgroundColor: 'rgba(0, 240, 255, 0.08)',
+              border: '1px solid rgba(0, 240, 255, 0.3)',
+              borderRadius: '4px',
+              padding: '3px 10px',
+              fontSize: '11px',
               fontFamily: 'var(--font-mono)',
-              color: '#64748b',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Cpu size={12} color="#38bdf8" />
-              <span>{metrics.cpuCores}C</span>
+              <span>{weather.icon}</span>
+              <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{weather.city}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Activity size={12} color="#10b981" />
-              <span>{metrics.memoryUsagePercent}% RAM</span>
+              <span className="hud-glow" style={{ color: '#00f0ff', fontWeight: 700 }}>
+                {weather.tempC}°C
+              </span>
+              <span style={{ fontSize: '9px', color: '#64748b' }}>({weather.condition})</span>
             </div>
           </div>
         )}
 
-        {/* Settings Action */}
-        <button
-          onClick={onOpenSettings}
-          title="Settings (Ctrl+,)"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#64748b',
-            cursor: 'pointer',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <Settings size={13} />
-        </button>
-
-        {/* Sleek Minimalist Window Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '6px' }}>
+        {/* Minimal Circular Window Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={handleMinimize}
             title="Minimize"
             style={{
-              width: '12px',
-              height: '12px',
+              width: '13px',
+              height: '13px',
               borderRadius: '50%',
-              backgroundColor: '#eab308',
+              backgroundColor: '#38bdf8',
               border: 'none',
               cursor: 'pointer',
-              opacity: 0.8,
-              transition: 'opacity 0.15s',
+              opacity: 0.85,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.8')}
           />
           <button
             onClick={handleMaximize}
-            title="Maximize / Restore"
+            title="Maximize"
             style={{
-              width: '12px',
-              height: '12px',
+              width: '13px',
+              height: '13px',
               borderRadius: '50%',
               backgroundColor: '#10b981',
               border: 'none',
               cursor: 'pointer',
-              opacity: 0.8,
-              transition: 'opacity 0.15s',
+              opacity: 0.85,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.8')}
           />
           <button
             onClick={handleClose}
             title="Close"
             style={{
-              width: '12px',
-              height: '12px',
+              width: '13px',
+              height: '13px',
               borderRadius: '50%',
               backgroundColor: '#ef4444',
               border: 'none',
               cursor: 'pointer',
-              opacity: 0.8,
-              transition: 'opacity 0.15s',
+              opacity: 0.85,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.8')}
           />
         </div>
       </div>

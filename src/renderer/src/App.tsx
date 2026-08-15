@@ -7,6 +7,7 @@ import { WorkspaceShell } from './components/workspace/WorkspaceShell';
 import { ViewMode } from './components/workspace/DockableLayout';
 import { TacticalBackground } from './components/common/TacticalBackground';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { HUDDock } from './components/hud/HUDDock';
 import { soundEffects } from './services/sound.service';
 import { voiceEngine } from './services/voice.service';
 import {
@@ -36,6 +37,7 @@ export default function App() {
   const [showBootSequenceSetting, setShowBootSequenceSetting] = useState(true);
   const [bootCompleted, setBootCompleted] = useState(false);
   const [activeView, setActiveView] = useState<ViewMode>('overview');
+  const [isListening, setIsListening] = useState(false);
 
   // Periodic Telemetry
   useEffect(() => {
@@ -53,6 +55,13 @@ export default function App() {
     fetchMetrics();
     const interval = setInterval(fetchMetrics, 2500);
     return () => clearInterval(interval);
+  }, []);
+
+  // Voice state listeners
+  useEffect(() => {
+    voiceEngine.onStateChange((state) => {
+      setIsListening(state.isListening);
+    });
   }, []);
 
   // Voice transcript handler
@@ -130,7 +139,7 @@ export default function App() {
     () => [
       {
         id: 'view-overview',
-        title: 'Switch View: Matrix Overview',
+        title: 'Switch View: Matrix HUD Overview',
         category: 'Workspace',
         shortcut: 'Ctrl+1',
         icon: <LayoutGrid size={14} />,
@@ -141,7 +150,7 @@ export default function App() {
         title: 'Focus View: AI Orchestration Studio',
         category: 'AI',
         shortcut: 'Ctrl+2',
-        icon: <Sparkles size={14} color="#f59e0b" />,
+        icon: <Sparkles size={14} color="#00f0ff" />,
         action: () => setActiveView('ai'),
       },
       {
@@ -276,14 +285,14 @@ export default function App() {
           <BootSequence onComplete={() => setBootCompleted(true)} />
         )}
 
-        {/* Tactical Titlebar with Voice Waveform HUD */}
+        {/* Stark Industries HUD Header with Weather/Location & Voice Spectrum */}
         <Titlebar
           metrics={metrics}
           onOpenSettings={() => setIsSettingsOpen(true)}
           onVoiceTranscript={handleVoiceTranscript}
         />
 
-        {/* Main Workspace Viewport */}
+        {/* Main Holographic Workspace Viewport */}
         <WorkspaceShell
           metrics={metrics}
           securityMode={securityMode}
@@ -291,6 +300,16 @@ export default function App() {
           onOpenSettings={() => setIsSettingsOpen(true)}
           activeView={activeView}
           onViewChange={setActiveView}
+          isListening={isListening}
+        />
+
+        {/* Circular HUD Bottom Dock */}
+        <HUDDock
+          activeView={activeView}
+          onViewChange={setActiveView}
+          isListening={isListening}
+          onToggleMic={() => voiceEngine.toggleListening()}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
 
         {/* Raycast Command Palette Modal */}

@@ -5,16 +5,8 @@ import { TelemetryPanel } from '../telemetry/TelemetryPanel';
 import { AIStudioPanel } from '../ai/AIStudioPanel';
 import { AgentHubPanel } from '../agents/AgentHubPanel';
 import { MemoryPanel } from '../memory/MemoryPanel';
-import {
-  Terminal,
-  FolderTree,
-  Activity,
-  LayoutGrid,
-  Columns,
-  Sparkles,
-  Bot,
-  Database,
-} from 'lucide-react';
+import { ArcReactorCore } from '../hud/ArcReactorCore';
+import { HUDLeftWing } from '../hud/HUDLeftWing';
 import type { SystemMetrics } from '../../types/electron';
 
 export type ViewMode =
@@ -26,24 +18,25 @@ export type ViewMode =
   | 'filesystem'
   | 'telemetry'
   | 'split-ai-term'
-  | 'split-term-fs'
-  | 'split-term-telem';
+  | 'split-term-fs';
 
 interface DockableLayoutProps {
   metrics?: SystemMetrics | null;
+  securityMode: 'SAFE' | 'NORMAL' | 'POWER';
   activeView: ViewMode;
   onViewChange: (view: ViewMode) => void;
   onOpenCommandPalette: () => void;
   onOpenSettings: () => void;
+  isListening?: boolean;
 }
 
 export const DockableLayout = ({
+  metrics,
+  securityMode,
   activeView,
-  onViewChange,
-  onOpenCommandPalette,
   onOpenSettings,
+  isListening = false,
 }: DockableLayoutProps) => {
-  // Save workspace view mode to local persistence
   useEffect(() => {
     if (window.jarvisAPI?.workspace) {
       window.jarvisAPI.workspace.saveState({ activeTab: activeView as any });
@@ -51,154 +44,109 @@ export const DockableLayout = ({
   }, [activeView]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '10px' }}>
-      {/* Subsystem Dock Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '6px 10px',
-          backgroundColor: '#0c0f17',
-          border: '1px solid rgba(255, 255, 255, 0.07)',
-          borderRadius: '6px',
-        }}
-      >
-        {/* View Mode Switcher */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', overflowX: 'auto' }}>
-          {[
-            { id: 'overview', label: 'Matrix Overview', icon: <LayoutGrid size={13} /> },
-            { id: 'ai', label: 'AI Studio', icon: <Sparkles size={13} color="#f59e0b" /> },
-            { id: 'agents', label: 'Agent Hub', icon: <Bot size={13} color="#38bdf8" /> },
-            { id: 'memory', label: 'Memory Vault', icon: <Database size={13} color="#c084fc" /> },
-            { id: 'terminal', label: 'PTY Terminal', icon: <Terminal size={13} /> },
-            { id: 'filesystem', label: 'File Explorer', icon: <FolderTree size={13} /> },
-            { id: 'telemetry', label: 'Telemetry', icon: <Activity size={13} /> },
-            { id: 'split-ai-term', label: 'AI + Terminal', icon: <Columns size={13} /> },
-            { id: 'split-term-fs', label: 'Terminal + Files', icon: <Columns size={13} /> },
-          ].map((mode) => {
-            const isSelected = activeView === mode.id;
-            return (
-              <button
-                key={mode.id}
-                onClick={() => onViewChange(mode.id as ViewMode)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 10px',
-                  borderRadius: '4px',
-                  backgroundColor: isSelected ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-                  border: isSelected ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid transparent',
-                  color: isSelected ? '#38bdf8' : '#94a3b8',
-                  fontSize: '11px',
-                  fontFamily: 'var(--font-mono)',
-                  cursor: 'pointer',
-                  transition: 'background 0.15s ease',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {mode.icon}
-                <span>{mode.label}</span>
-              </button>
-            );
-          })}
-        </div>
+    <div style={{ display: 'flex', flex: 1, width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
+      {/* 1. OVERVIEW: Full Holographic HUD Matrix with Arc Reactor Core + Side Wings */}
+      {activeView === 'overview' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '280px 1fr 340px',
+            gap: '14px',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          {/* Left Wing: System Diagnostics & Arc Gauges */}
+          <HUDLeftWing metrics={metrics || null} securityMode={securityMode} />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button
-            onClick={onOpenCommandPalette}
+          {/* Center: Central Arc Reactor Holographic Core */}
+          <div
+            className="hud-panel hud-corners"
             style={{
+              borderRadius: '8px',
               display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: '#121622',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '4px',
-              color: '#94a3b8',
-              padding: '4px 8px',
-              fontSize: '10px',
-              fontFamily: 'var(--font-mono)',
-              cursor: 'pointer',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
-            <Sparkles size={11} color="#38bdf8" />
-            <span>COMMAND CENTER (Ctrl+K)</span>
-          </button>
+            <ArcReactorCore metrics={metrics} isListening={isListening} />
+          </div>
+
+          {/* Right Wing: Quick AI Studio & Terminal Widget */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%' }}>
+            <div className="hud-panel hud-corners" style={{ flex: 1, borderRadius: '6px', overflow: 'hidden' }}>
+              <AIStudioPanel onOpenSettings={onOpenSettings} />
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Main Dock Content Container */}
-      <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
-        {activeView === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gridTemplateRows: '1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
-            {/* Terminal Left */}
-            <div style={{ gridRow: 'span 2', height: '100%' }}>
-              <TerminalPanel />
-            </div>
+      {/* 2. AI STUDIO VIEW */}
+      {activeView === 'ai' && (
+        <div className="hud-panel hud-corners" style={{ width: '100%', height: '100%', borderRadius: '6px', overflow: 'hidden' }}>
+          <AIStudioPanel onOpenSettings={onOpenSettings} />
+        </div>
+      )}
 
-            {/* Files Top Right */}
-            <div style={{ height: '100%' }}>
-              <FilesystemPanel />
-            </div>
+      {/* 3. AGENT HUB VIEW */}
+      {activeView === 'agents' && (
+        <div className="hud-panel hud-corners" style={{ width: '100%', height: '100%', borderRadius: '6px', overflow: 'hidden' }}>
+          <AgentHubPanel onOpenSettings={onOpenSettings} />
+        </div>
+      )}
 
-            {/* Telemetry Bottom Right */}
-            <div style={{ height: '100%' }}>
-              <TelemetryPanel />
-            </div>
-          </div>
-        )}
+      {/* 4. MEMORY VAULT VIEW */}
+      {activeView === 'memory' && (
+        <div className="hud-panel hud-corners" style={{ width: '100%', height: '100%', borderRadius: '6px', overflow: 'hidden' }}>
+          <MemoryPanel />
+        </div>
+      )}
 
-        {activeView === 'ai' && (
-          <div style={{ width: '100%', height: '100%' }}>
+      {/* 5. PTY TERMINAL VIEW */}
+      {activeView === 'terminal' && (
+        <div className="hud-panel hud-corners" style={{ width: '100%', height: '100%', borderRadius: '6px', overflow: 'hidden' }}>
+          <TerminalPanel />
+        </div>
+      )}
+
+      {/* 6. FILESYSTEM EXPLORER VIEW */}
+      {activeView === 'filesystem' && (
+        <div className="hud-panel hud-corners" style={{ width: '100%', height: '100%', borderRadius: '6px', overflow: 'hidden' }}>
+          <FilesystemPanel />
+        </div>
+      )}
+
+      {/* 7. HARDWARE TELEMETRY VIEW */}
+      {activeView === 'telemetry' && (
+        <div className="hud-panel hud-corners" style={{ width: '100%', height: '100%', borderRadius: '6px', overflow: 'hidden' }}>
+          <TelemetryPanel />
+        </div>
+      )}
+
+      {/* 8. SPLIT AI + TERMINAL VIEW */}
+      {activeView === 'split-ai-term' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%', height: '100%' }}>
+          <div className="hud-panel hud-corners" style={{ borderRadius: '6px', overflow: 'hidden' }}>
             <AIStudioPanel onOpenSettings={onOpenSettings} />
           </div>
-        )}
-
-        {activeView === 'agents' && (
-          <div style={{ width: '100%', height: '100%' }}>
-            <AgentHubPanel onOpenSettings={onOpenSettings} />
-          </div>
-        )}
-
-        {activeView === 'memory' && (
-          <div style={{ width: '100%', height: '100%' }}>
-            <MemoryPanel />
-          </div>
-        )}
-
-        {activeView === 'terminal' && (
-          <div style={{ width: '100%', height: '100%' }}>
+          <div className="hud-panel hud-corners" style={{ borderRadius: '6px', overflow: 'hidden' }}>
             <TerminalPanel />
           </div>
-        )}
+        </div>
+      )}
 
-        {activeView === 'filesystem' && (
-          <div style={{ width: '100%', height: '100%' }}>
+      {/* 9. SPLIT TERMINAL + FILESYSTEM VIEW */}
+      {activeView === 'split-term-fs' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%', height: '100%' }}>
+          <div className="hud-panel hud-corners" style={{ borderRadius: '6px', overflow: 'hidden' }}>
+            <TerminalPanel />
+          </div>
+          <div className="hud-panel hud-corners" style={{ borderRadius: '6px', overflow: 'hidden' }}>
             <FilesystemPanel />
           </div>
-        )}
-
-        {activeView === 'telemetry' && (
-          <div style={{ width: '100%', height: '100%' }}>
-            <TelemetryPanel />
-          </div>
-        )}
-
-        {activeView === 'split-ai-term' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
-            <AIStudioPanel onOpenSettings={onOpenSettings} />
-            <TerminalPanel />
-          </div>
-        )}
-
-        {activeView === 'split-term-fs' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
-            <TerminalPanel />
-            <FilesystemPanel />
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
