@@ -1,10 +1,9 @@
-$binPath = "C:\Users\Aryan\Desktop\Jarvis\bin"
+$binPath = (Resolve-Path "$PSScriptRoot\..\bin").Path
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 
-if ($userPath -notlike "*$binPath*") {
-    $newPath = if ($userPath.EndsWith(";")) { "$userPath$binPath" } else { "$userPath;$binPath" }
-    [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    Write-Host "JARVIS CLI path added to User Environment PATH successfully!" -ForegroundColor Green
-} else {
-    Write-Host "JARVIS CLI path is already configured in User PATH." -ForegroundColor Cyan
-}
+# Remove any old stale paths if drive changed
+$cleanPath = ($userPath -split ';' | Where-Object { $_ -and $_ -notmatch '(?i)[\\/]Jarvis[\\/]bin' }) -join ';'
+$newPath = "$cleanPath;$binPath"
+
+[Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+Write-Host "JARVIS CLI path updated to: $binPath in User Environment PATH!" -ForegroundColor Green

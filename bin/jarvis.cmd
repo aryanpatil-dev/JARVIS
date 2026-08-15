@@ -2,7 +2,8 @@
 setlocal
 chcp 65001 >nul 2>&1
 
-set "JARVIS_ROOT=C:\Users\Aryan\Desktop\Jarvis"
+:: Dynamically determine root directory (independent of drive letter C:\, D:\, etc.)
+set "JARVIS_ROOT=%~dp0.."
 
 if "%~1"=="" (
     cls
