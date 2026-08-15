@@ -8,6 +8,7 @@ import { TelemetryService } from './services/telemetry.service';
 import { WorkspaceService } from './services/workspace.service';
 import { ToolsService } from './services/tools.service';
 import { AIService } from './services/ai.service';
+import { AgentService } from './services/agent.service';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -19,6 +20,7 @@ const telemetryService = new TelemetryService();
 const workspaceService = new WorkspaceService();
 const toolsService = new ToolsService(filesystemService, telemetryService);
 const aiService = new AIService(toolsService);
+const agentService = new AgentService(toolsService, aiService);
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -40,10 +42,10 @@ function createWindow() {
 
   terminalService.setWindow(mainWindow);
   aiService.setWindow(mainWindow);
+  agentService.setWindow(mainWindow);
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
-    // mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
   }
@@ -176,6 +178,18 @@ ipcMain.handle(IPC_CHANNELS.AI.SAVE_KEY, (_e, key: string) => {
 ipcMain.handle(IPC_CHANNELS.AI.GET_KEY_STATUS, () => {
   return aiService.hasApiKey();
 });
+
+// Agent Subsystem
+ipcMain.handle(IPC_CHANNELS.AGENT.GET_PERSONAS, () => {
+  return agentService.getAgentPersonas();
+});
+
+ipcMain.handle(
+  IPC_CHANNELS.AGENT.RUN_TASK,
+  async (_e, { agentType, prompt }: { agentType: any; prompt: string }) => {
+    return agentService.runAgentTask(agentType, prompt);
+  }
+);
 
 app.whenReady().then(() => {
   createWindow();

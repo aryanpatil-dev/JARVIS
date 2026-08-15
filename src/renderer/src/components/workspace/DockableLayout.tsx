@@ -3,6 +3,7 @@ import { TerminalPanel } from '../terminal/TerminalPanel';
 import { FilesystemPanel } from '../filesystem/FilesystemPanel';
 import { TelemetryPanel } from '../telemetry/TelemetryPanel';
 import { AIStudioPanel } from '../ai/AIStudioPanel';
+import { AgentHubPanel } from '../agents/AgentHubPanel';
 import {
   Terminal,
   FolderTree,
@@ -10,15 +11,17 @@ import {
   LayoutGrid,
   Columns,
   Sparkles,
+  Bot,
 } from 'lucide-react';
 import type { SystemMetrics } from '../../types/electron';
 
 export type ViewMode =
   | 'overview'
+  | 'ai'
+  | 'agents'
   | 'terminal'
   | 'filesystem'
   | 'telemetry'
-  | 'ai'
   | 'split-ai-term'
   | 'split-term-fs'
   | 'split-term-telem';
@@ -63,6 +66,7 @@ export const DockableLayout = ({
           {[
             { id: 'overview', label: 'Matrix Overview', icon: <LayoutGrid size={13} /> },
             { id: 'ai', label: 'AI Studio', icon: <Sparkles size={13} color="#f59e0b" /> },
+            { id: 'agents', label: 'Agent Hub', icon: <Bot size={13} color="#38bdf8" /> },
             { id: 'terminal', label: 'PTY Terminal', icon: <Terminal size={13} /> },
             { id: 'filesystem', label: 'File Explorer', icon: <FolderTree size={13} /> },
             { id: 'telemetry', label: 'Telemetry', icon: <Activity size={13} /> },
@@ -144,6 +148,12 @@ export const DockableLayout = ({
         {activeView === 'ai' && (
           <div style={{ width: '100%', height: '100%' }}>
             <AIStudioPanel onOpenSettings={onOpenSettings} />
+          </div>
+        )}
+
+        {activeView === 'agents' && (
+          <div style={{ width: '100%', height: '100%' }}>
+            <AgentHubPanel onOpenSettings={onOpenSettings} />
           </div>
         )}
 

@@ -5,9 +5,20 @@ import {
   WorkspaceState,
   ToolCallEvent,
   ChatMessage,
+  AgentPersona,
+  AgentTask,
 } from '../../shared/ipc-channels';
 
-export type { ProcessInfo, DetailedSystemStats, FileItem, WorkspaceState, ToolCallEvent, ChatMessage };
+export type {
+  ProcessInfo,
+  DetailedSystemStats,
+  FileItem,
+  WorkspaceState,
+  ToolCallEvent,
+  ChatMessage,
+  AgentPersona,
+  AgentTask,
+};
 
 export interface SystemMetrics {
   cpuModel: string;
@@ -59,6 +70,11 @@ export interface IJarvisAPI {
     getKeyStatus: () => Promise<boolean>;
     onStreamChunk: (callback: (event: { text: string; done?: boolean }) => void) => () => void;
     onToolEvent: (callback: (event: ToolCallEvent) => void) => () => void;
+  };
+  agent: {
+    getPersonas: () => Promise<AgentPersona[]>;
+    runTask: (agentType: string, prompt: string) => Promise<string>;
+    onTaskUpdate: (callback: (task: AgentTask) => void) => () => void;
   };
   config: {
     get: (key: string) => Promise<unknown>;

@@ -4,7 +4,7 @@ import { Search, X } from 'lucide-react';
 export interface CommandItem {
   id: string;
   title: string;
-  category: 'Workspace' | 'System' | 'AI' | 'Terminal' | 'Settings';
+  category: 'Workspace' | 'System' | 'AI' | 'Terminal' | 'Settings' | 'Agents';
   shortcut?: string;
   icon: React.ReactNode;
   action: () => void;

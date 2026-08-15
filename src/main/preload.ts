@@ -6,6 +6,8 @@ import {
   FileItem,
   WorkspaceState,
   ToolCallEvent,
+  AgentPersona,
+  AgentTask,
 } from '../shared/ipc-channels';
 
 const jarvisAPI = {
@@ -85,6 +87,19 @@ const jarvisAPI = {
       ipcRenderer.on(IPC_CHANNELS.AI.TOOL_EVENT, subscription);
       return () => {
         ipcRenderer.removeListener(IPC_CHANNELS.AI.TOOL_EVENT, subscription);
+      };
+    },
+  },
+  agent: {
+    getPersonas: (): Promise<AgentPersona[]> =>
+      ipcRenderer.invoke(IPC_CHANNELS.AGENT.GET_PERSONAS),
+    runTask: (agentType: string, prompt: string): Promise<string> =>
+      ipcRenderer.invoke(IPC_CHANNELS.AGENT.RUN_TASK, { agentType, prompt }),
+    onTaskUpdate: (callback: (task: AgentTask) => void) => {
+      const subscription = (_e: unknown, task: AgentTask) => callback(task);
+      ipcRenderer.on(IPC_CHANNELS.AGENT.TASK_UPDATE, subscription);
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.AGENT.TASK_UPDATE, subscription);
       };
     },
   },

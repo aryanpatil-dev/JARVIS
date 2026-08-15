@@ -47,6 +47,11 @@ export const IPC_CHANNELS = {
     SAVE_KEY: 'ai:saveKey',
     GET_KEY_STATUS: 'ai:getKeyStatus',
   },
+  AGENT: {
+    GET_PERSONAS: 'agent:getPersonas',
+    RUN_TASK: 'agent:runTask',
+    TASK_UPDATE: 'agent:taskUpdate',
+  },
 } as const;
 
 export interface ProcessInfo {
@@ -81,8 +86,8 @@ export interface DetailedSystemStats {
 
 export interface WorkspaceState {
   activeWorkspaceId: string;
-  openPanels: ('terminal' | 'filesystem' | 'telemetry' | 'ai')[];
-  activeTab: 'overview' | 'terminal' | 'filesystem' | 'telemetry' | 'ai' | 'split-term-fs' | 'split-term-telem';
+  openPanels: ('terminal' | 'filesystem' | 'telemetry' | 'ai' | 'agents')[];
+  activeTab: 'overview' | 'terminal' | 'filesystem' | 'telemetry' | 'ai' | 'agents' | 'split-term-fs' | 'split-term-telem' | 'split-ai-term';
   currentPath: string;
   terminalSessions: { id: string; name: string }[];
 }
@@ -103,4 +108,31 @@ export interface ChatMessage {
   timestamp: number;
   toolCalls?: ToolCallEvent[];
   isStreaming?: boolean;
+}
+
+export interface AgentPersona {
+  id: 'coding' | 'terminal' | 'browser' | 'file' | 'research' | 'system';
+  name: string;
+  description: string;
+  badge: string;
+  color: string;
+}
+
+export interface AgentTaskStep {
+  id: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  toolCall?: ToolCallEvent;
+  output?: string;
+}
+
+export interface AgentTask {
+  id: string;
+  agentType: 'coding' | 'terminal' | 'browser' | 'file' | 'research' | 'system';
+  prompt: string;
+  status: 'running' | 'completed' | 'failed' | 'cancelled';
+  steps: AgentTaskStep[];
+  startTime: number;
+  endTime?: number;
+  finalSummary?: string;
 }

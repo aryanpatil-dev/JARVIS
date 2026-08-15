@@ -57,7 +57,7 @@ export class AIService {
     this.isGenerating = false;
   }
 
-  public async processPrompt(prompt: string, modelName: string = 'gemini-2.5-flash'): Promise<void> {
+  public async processPrompt(prompt: string, modelName: string = 'gemini-3.5-flash-lite'): Promise<void> {
     if (!this.hasApiKey()) {
       this.window?.webContents.send(IPC_CHANNELS.AI.STREAM_CHUNK, {
         text: '⚠️ **Gemini API Key is not configured.**\n\nPlease click the Settings icon (`Ctrl+,`) in the top right to configure your Google Gemini API key to activate autonomous agent workflows and tool execution.',

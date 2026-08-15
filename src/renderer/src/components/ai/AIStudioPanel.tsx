@@ -30,7 +30,7 @@ export const AIStudioPanel = ({ onOpenSettings }: AIStudioPanelProps) => {
   ]);
   const [inputPrompt, setInputPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash');
+  const [selectedModel, setSelectedModel] = useState('gemini-3.5-flash-lite');
   const [hasApiKey, setHasApiKey] = useState(true);
   const [expandedTools, setExpandedTools] = useState<Record<string, boolean>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -219,8 +219,8 @@ export const AIStudioPanel = ({ onOpenSettings }: AIStudioPanelProps) => {
               cursor: 'pointer',
             }}
           >
-            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Ultra Fast)</option>
-            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Reasoning)</option>
+            <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite (Ultra Fast)</option>
+            <option value="gemini-3.1-pro">Gemini 3.1 Pro (Deep Reasoning)</option>
           </select>
 
           <button

@@ -16,6 +16,7 @@ import {
   Columns,
   LayoutGrid,
   Sparkles,
+  Bot,
 } from 'lucide-react';
 import type { SystemMetrics } from './types/electron';
 
@@ -72,13 +73,17 @@ export default function App() {
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '3') {
         e.preventDefault();
-        setActiveView('terminal');
+        setActiveView('agents');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '4') {
         e.preventDefault();
-        setActiveView('filesystem');
+        setActiveView('terminal');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '5') {
+        e.preventDefault();
+        setActiveView('filesystem');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '6') {
         e.preventDefault();
         setActiveView('telemetry');
       }
@@ -108,10 +113,18 @@ export default function App() {
         action: () => setActiveView('ai'),
       },
       {
+        id: 'view-agents',
+        title: 'Focus View: Autonomous Agent Hub',
+        category: 'Agents',
+        shortcut: 'Ctrl+3',
+        icon: <Bot size={14} color="#38bdf8" />,
+        action: () => setActiveView('agents'),
+      },
+      {
         id: 'view-terminal',
         title: 'Focus View: PTY Terminal Console',
         category: 'Terminal',
-        shortcut: 'Ctrl+3',
+        shortcut: 'Ctrl+4',
         icon: <Terminal size={14} />,
         action: () => setActiveView('terminal'),
       },
@@ -119,7 +132,7 @@ export default function App() {
         id: 'view-filesystem',
         title: 'Focus View: File Explorer Matrix',
         category: 'Workspace',
-        shortcut: 'Ctrl+4',
+        shortcut: 'Ctrl+5',
         icon: <FolderTree size={14} />,
         action: () => setActiveView('filesystem'),
       },
@@ -127,7 +140,7 @@ export default function App() {
         id: 'view-telemetry',
         title: 'Focus View: Hardware Telemetry & Processes',
         category: 'System',
-        shortcut: 'Ctrl+5',
+        shortcut: 'Ctrl+6',
         icon: <Cpu size={14} />,
         action: () => setActiveView('telemetry'),
       },

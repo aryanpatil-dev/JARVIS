@@ -29,14 +29,19 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
   - [x] Permission Firewall (Safe / Normal / Power Modes)
   - [x] AI Command Center & Intent Router
 
-- [ ] **Phase 4: Autonomous Agent Architecture** *(NEXT)*
-  - [ ] Coding Agent
-  - [ ] Terminal Agent
-  - [ ] Browser Automation Agent
-  - [ ] Research & File Agent
-  - [ ] Agent Activity & Step Inspection View
+- [x] **Phase 4: Autonomous Agent Architecture** *(COMPLETED)*
+  - [x] Coding Agent (code inspection, editing, build verification)
+  - [x] Terminal Agent (PowerShell / CMD sequence execution)
+  - [x] Browser Automation Agent (port testing, dev server validation)
+  - [x] Research & File Agent (filesystem mapping, report generation)
+  - [x] System Agent (telemetry & process management)
+  - [x] Agent Hub & Mission Dispatch Interface
 
-- [ ] **Phase 5: Memory & Workspaces**
+- [ ] **Phase 5: Voice & Multimodal Interface** *(NEXT)*
+  - [ ] Speech-to-Text (STT) Audio Pipeline
+  - [ ] Text-to-Speech (TTS) Voice Synthesis
+  - [ ] Voice Activity & Waveform Audio Visualizer
+  - [ ] Tactical Sci-Fi Audio Cues & Sound FX*
   - [ ] Short-Term Task Memory
   - [ ] Workspace Project Context
   - [ ] Persistent User Preferences & Durable Context

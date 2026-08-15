@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-08-15
+
+### Added
+- **Autonomous Agent Orchestrator**: Multi-agent persona subsystem featuring Coding, Terminal, Browser, File, Research, and System agents.
+- **Agent Hub & Mission Control**: Dedicated panel with persona selector, tactical badges, one-click mission launchpad, and real-time status telemetry.
+- **Gemini Model Upgrade**: Added native support for **Gemini 3.5 Flash Lite** (Ultra Fast) and **Gemini 3.1 Pro** (Deep Reasoning).
+- **Global Hotkey Navigation**: Added `Ctrl+3` shortcut for Agent Hub and updated Command Palette.
+- **Phase 4 Checkpoint**: Documented milestone in `docs/checkpoints/PHASE-04.md`.
+
 ## [0.3.0] - 2026-08-15
 
 ### Added
