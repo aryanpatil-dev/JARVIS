@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron';
 import path from 'path';
 import os from 'os';
 import { IPC_CHANNELS, StoredSession, ProjectMemoryEntry } from '../shared/ipc-channels';
@@ -10,6 +10,7 @@ import { ToolsService } from './services/tools.service';
 import { AIService } from './services/ai.service';
 import { AgentService } from './services/agent.service';
 import { MemoryService } from './services/memory.service';
+import { TrayService } from './services/tray.service';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -20,6 +21,7 @@ const filesystemService = new FilesystemService();
 const telemetryService = new TelemetryService();
 const workspaceService = new WorkspaceService();
 const memoryService = new MemoryService();
+const trayService = new TrayService();
 const toolsService = new ToolsService(filesystemService, telemetryService);
 const aiService = new AIService(toolsService);
 const agentService = new AgentService(toolsService, aiService);
@@ -45,6 +47,7 @@ function createWindow() {
   terminalService.setWindow(mainWindow);
   aiService.setWindow(mainWindow);
   agentService.setWindow(mainWindow);
+  trayService.init(mainWindow);
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
@@ -55,6 +58,7 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow?.maximize();
     mainWindow?.show();
+    trayService.showNotification('Core Online', 'JARVIS desktop environment initialized and ready.');
   });
 
   mainWindow.on('closed', () => {
@@ -62,6 +66,32 @@ function createWindow() {
     mainWindow = null;
   });
 }
+
+// Global hotkey registration
+app.whenReady().then(() => {
+  createWindow();
+
+  // Register Global Hotkey (Ctrl+Shift+J or Super+J)
+  globalShortcut.register('CommandOrControl+Shift+J', () => {
+    trayService.toggleWindow();
+  });
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
 
 // Window state IPC handlers
 ipcMain.handle(IPC_CHANNELS.WINDOW.MINIMIZE, () => {
@@ -111,6 +141,13 @@ ipcMain.handle(IPC_CHANNELS.SYSTEM.GET_PROCESSES, async () => {
 ipcMain.handle(IPC_CHANNELS.SYSTEM.KILL_PROCESS, async (_e, pid: number) => {
   return telemetryService.killProcess(pid);
 });
+
+ipcMain.handle(
+  IPC_CHANNELS.SYSTEM.SHOW_NOTIFICATION,
+  (_e, { title, body }: { title: string; body: string }) => {
+    trayService.showNotification(title, body);
+  }
+);
 
 // Terminal IPC handlers
 ipcMain.handle(
@@ -220,20 +257,4 @@ ipcMain.handle(
 
 ipcMain.handle(IPC_CHANNELS.MEMORY.DELETE_ENTRY, (_e, memoryId: string) => {
   return memoryService.deleteProjectMemory(memoryId);
-});
-
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
 });

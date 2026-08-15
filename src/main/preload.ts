@@ -26,6 +26,8 @@ const jarvisAPI = {
       ipcRenderer.invoke(IPC_CHANNELS.SYSTEM.GET_PROCESSES),
     killProcess: (pid: number): Promise<boolean> =>
       ipcRenderer.invoke(IPC_CHANNELS.SYSTEM.KILL_PROCESS, pid),
+    showNotification: (title: string, body: string): Promise<void> =>
+      ipcRenderer.invoke(IPC_CHANNELS.SYSTEM.SHOW_NOTIFICATION, { title, body }),
   },
   terminal: {
     create: (id: string, customCwd?: string, customShell?: string): Promise<boolean> =>
@@ -106,19 +108,17 @@ const jarvisAPI = {
     },
   },
   memory: {
-    getSessions: (workspaceId?: string): Promise<StoredSession[]> =>
+    getSessions: (workspaceId?: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.MEMORY.GET_SESSIONS, workspaceId),
-    saveSession: (session: StoredSession): Promise<boolean> =>
+    saveSession: (session: StoredSession) =>
       ipcRenderer.invoke(IPC_CHANNELS.MEMORY.SAVE_SESSION, session),
-    deleteSession: (sessionId: string): Promise<boolean> =>
+    deleteSession: (sessionId: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.MEMORY.DELETE_SESSION, sessionId),
-    getEntries: (workspaceId?: string): Promise<ProjectMemoryEntry[]> =>
+    getEntries: (workspaceId?: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.MEMORY.GET_ENTRIES, workspaceId),
-    saveEntry: (
-      entry: Omit<ProjectMemoryEntry, 'id' | 'timestamp'>
-    ): Promise<ProjectMemoryEntry> =>
+    saveEntry: (entry: Omit<ProjectMemoryEntry, 'id' | 'timestamp'>) =>
       ipcRenderer.invoke(IPC_CHANNELS.MEMORY.SAVE_ENTRY, entry),
-    deleteEntry: (memoryId: string): Promise<boolean> =>
+    deleteEntry: (memoryId: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.MEMORY.DELETE_ENTRY, memoryId),
   },
   config: {

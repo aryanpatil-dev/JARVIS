@@ -14,6 +14,7 @@ export const IPC_CHANNELS = {
     GET_PROCESSES: 'system:getProcesses',
     KILL_PROCESS: 'system:killProcess',
     METRICS_STREAM: 'system:metricsStream',
+    SHOW_NOTIFICATION: 'system:showNotification',
   },
   TERMINAL: {
     CREATE: 'terminal:create',

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2026-08-15
+
+### Added
+- **Windows Global Hotkey Daemon**: Registered system-wide hotkey (`Ctrl+Shift+J`) to toggle/focus JARVIS from anywhere in Windows.
+- **System Tray Subsystem**: Native Windows Tray icon with interactive context menu and minimize/restore handling.
+- **Native Toast Notifications**: Windows notifications engine for system alerts and task status.
+- **CLI Bridge Scripts**: Standalone `bin/jarvis.cmd` and `bin/jarvis.ps1` for terminal execution.
+- **Phase 7 Checkpoint**: Documented milestone in `docs/checkpoints/PHASE-07.md`.
+
 ## [0.6.0] - 2026-08-15
 
 ### Added

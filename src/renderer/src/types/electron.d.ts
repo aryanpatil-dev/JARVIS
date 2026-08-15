@@ -47,6 +47,7 @@ export interface IJarvisAPI {
     getDetailedStats: () => Promise<DetailedSystemStats>;
     getProcesses: () => Promise<ProcessInfo[]>;
     killProcess: (pid: number) => Promise<boolean>;
+    showNotification: (title: string, body: string) => Promise<void>;
   };
   terminal: {
     create: (id: string, customCwd?: string, customShell?: string) => Promise<boolean>;

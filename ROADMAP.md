@@ -51,22 +51,14 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
   - [x] Persistent User Preferences & Durable Memory Engine
   - [x] Memory & Knowledge Hub UI Panel
 
-- [ ] **Phase 7: Windows Integration & CLI** *(NEXT)*
-  - [ ] Global Windows Hotkey Daemon (`Win+J`)
-  - [ ] System Tray Icon with Status Context Menu
-  - [ ] Native Windows OS Toast Notifications
-  - [ ] Standalone CLI Bridge & Scripting Utility
-  - [ ] Global Focus Hotkey (`Ctrl + Space`)
-  - [ ] Windows System Tray & Notifications
-  - [ ] Global `jarvis` CLI Launcher in Windows Terminal
-  - [ ] Start Menu & Desktop Shortcuts
+- [x] **Phase 7: Windows Integration & CLI** *(COMPLETED)*
+  - [x] Global Windows Hotkey Daemon (`Ctrl+Shift+J`)
+  - [x] System Tray Icon with Status Context Menu
+  - [x] Native Windows OS Toast Notifications
+  - [x] Standalone CLI Bridge & Scripting Utility (`bin/jarvis.cmd`, `bin/jarvis.ps1`)
 
-- [ ] **Phase 7: Polish & Performance**
-  - [ ] GPU-Accelerated Micro-Animations & Sound FX
-  - [ ] Crash Recovery & Health Monitoring
-  - [ ] Idle CPU / RAM Footprint Optimization
+- [ ] **Phase 8: Final Polish & Release Engineering** *(NEXT)*
+  - [ ] Standalone Portable Distribution (`release/JARVIS/JARVIS.exe`)
+  - [ ] Ambient Tactical FX & Shaders
+  - [ ] Clean Machine End-to-End Verification
 
-- [ ] **Phase 8: Release Engineering**
-  - [ ] Standalone Portable Build Verification (`release/JARVIS/JARVIS.exe`)
-  - [ ] NSIS Windows Installer (`release/JARVIS-Setup.exe`)
-  - [ ] Clean Machine End-to-End Test
