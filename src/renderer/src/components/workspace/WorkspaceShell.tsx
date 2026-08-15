@@ -8,6 +8,7 @@ import {
   Activity,
   Plus,
   Columns,
+  Sparkles,
 } from 'lucide-react';
 import { DockableLayout, ViewMode } from './DockableLayout';
 import type { SystemMetrics } from '../../types/electron';
@@ -153,6 +154,7 @@ export const WorkspaceShell = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {[
                 { name: 'Matrix Overview', icon: <Columns size={13} />, mode: 'overview' },
+                { name: 'AI Studio', icon: <Sparkles size={13} color="#f59e0b" />, mode: 'ai' },
                 { name: 'PTY Terminal', icon: <Terminal size={13} />, mode: 'terminal' },
                 { name: 'File Explorer', icon: <FolderTree size={13} />, mode: 'filesystem' },
                 { name: 'Hardware Telemetry', icon: <Cpu size={13} />, mode: 'telemetry' },
@@ -240,6 +242,7 @@ export const WorkspaceShell = ({
           activeView={activeView}
           onViewChange={onViewChange}
           onOpenCommandPalette={onOpenCommandPalette}
+          onOpenSettings={onOpenSettings}
         />
       </main>
     </div>

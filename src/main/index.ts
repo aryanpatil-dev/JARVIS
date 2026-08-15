@@ -6,6 +6,8 @@ import { TerminalService } from './services/terminal.service';
 import { FilesystemService } from './services/filesystem.service';
 import { TelemetryService } from './services/telemetry.service';
 import { WorkspaceService } from './services/workspace.service';
+import { ToolsService } from './services/tools.service';
+import { AIService } from './services/ai.service';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -15,6 +17,8 @@ const terminalService = new TerminalService();
 const filesystemService = new FilesystemService();
 const telemetryService = new TelemetryService();
 const workspaceService = new WorkspaceService();
+const toolsService = new ToolsService(filesystemService, telemetryService);
+const aiService = new AIService(toolsService);
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -35,6 +39,7 @@ function createWindow() {
   });
 
   terminalService.setWindow(mainWindow);
+  aiService.setWindow(mainWindow);
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
@@ -153,6 +158,23 @@ ipcMain.handle(IPC_CHANNELS.WORKSPACE.GET_STATE, () => {
 
 ipcMain.handle(IPC_CHANNELS.WORKSPACE.SAVE_STATE, (_e, state) => {
   return workspaceService.saveState(state);
+});
+
+// AI & Gemini Engine
+ipcMain.handle(IPC_CHANNELS.AI.PROMPT, async (_e, { prompt, model }: { prompt: string; model?: string }) => {
+  return aiService.processPrompt(prompt, model);
+});
+
+ipcMain.handle(IPC_CHANNELS.AI.CANCEL, () => {
+  aiService.cancelGeneration();
+});
+
+ipcMain.handle(IPC_CHANNELS.AI.SAVE_KEY, (_e, key: string) => {
+  return aiService.saveApiKey(key);
+});
+
+ipcMain.handle(IPC_CHANNELS.AI.GET_KEY_STATUS, () => {
+  return aiService.hasApiKey();
 });
 
 app.whenReady().then(() => {

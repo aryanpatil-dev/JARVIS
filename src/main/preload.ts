@@ -5,6 +5,7 @@ import {
   DetailedSystemStats,
   FileItem,
   WorkspaceState,
+  ToolCallEvent,
 } from '../shared/ipc-channels';
 
 const jarvisAPI = {
@@ -63,6 +64,29 @@ const jarvisAPI = {
       ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE.GET_STATE),
     saveState: (state: Partial<WorkspaceState>): Promise<boolean> =>
       ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE.SAVE_STATE, state),
+  },
+  ai: {
+    prompt: (prompt: string, model?: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.AI.PROMPT, { prompt, model }),
+    cancel: () => ipcRenderer.invoke(IPC_CHANNELS.AI.CANCEL),
+    saveKey: (key: string): Promise<boolean> =>
+      ipcRenderer.invoke(IPC_CHANNELS.AI.SAVE_KEY, key),
+    getKeyStatus: (): Promise<boolean> =>
+      ipcRenderer.invoke(IPC_CHANNELS.AI.GET_KEY_STATUS),
+    onStreamChunk: (callback: (event: { text: string; done?: boolean }) => void) => {
+      const subscription = (_e: unknown, value: { text: string; done?: boolean }) => callback(value);
+      ipcRenderer.on(IPC_CHANNELS.AI.STREAM_CHUNK, subscription);
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.AI.STREAM_CHUNK, subscription);
+      };
+    },
+    onToolEvent: (callback: (event: ToolCallEvent) => void) => {
+      const subscription = (_e: unknown, value: ToolCallEvent) => callback(value);
+      ipcRenderer.on(IPC_CHANNELS.AI.TOOL_EVENT, subscription);
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.AI.TOOL_EVENT, subscription);
+      };
+    },
   },
   config: {
     get: (key: string) => ipcRenderer.invoke(IPC_CHANNELS.CONFIG.GET, key),

@@ -39,6 +39,14 @@ export const IPC_CHANNELS = {
     GET: 'config:get',
     SET: 'config:set',
   },
+  AI: {
+    PROMPT: 'ai:prompt',
+    CANCEL: 'ai:cancel',
+    STREAM_CHUNK: 'ai:streamChunk',
+    TOOL_EVENT: 'ai:toolEvent',
+    SAVE_KEY: 'ai:saveKey',
+    GET_KEY_STATUS: 'ai:getKeyStatus',
+  },
 } as const;
 
 export interface ProcessInfo {
@@ -74,7 +82,25 @@ export interface DetailedSystemStats {
 export interface WorkspaceState {
   activeWorkspaceId: string;
   openPanels: ('terminal' | 'filesystem' | 'telemetry' | 'ai')[];
-  activeTab: 'terminal' | 'filesystem' | 'telemetry' | 'ai';
+  activeTab: 'overview' | 'terminal' | 'filesystem' | 'telemetry' | 'ai' | 'split-term-fs' | 'split-term-telem';
   currentPath: string;
   terminalSessions: { id: string; name: string }[];
+}
+
+export interface ToolCallEvent {
+  id: string;
+  tool: string;
+  args: Record<string, unknown>;
+  status: 'executing' | 'completed' | 'failed' | 'requires_permission';
+  result?: unknown;
+  error?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  sender: 'user' | 'jarvis' | 'system';
+  content: string;
+  timestamp: number;
+  toolCalls?: ToolCallEvent[];
+  isStreaming?: boolean;
 }

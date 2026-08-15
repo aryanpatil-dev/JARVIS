@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-08-15
+
+### Added
+- **Google Gemini Provider Engine**: Native `@google/genai` integration with real-time token streaming, model selection (`gemini-2.5-flash`, `gemini-2.5-pro`), and encrypted local credential storage.
+- **Structured Tool Runtime**: Native host tool declarations for `execute_command`, `read_file`, `write_file`, `list_directory`, `get_system_telemetry`, and `list_running_processes`.
+- **AI Orchestration Studio**: Interactive conversation and agent console with Markdown syntax rendering, dynamic streaming cursor, and expandable tool execution callouts with arguments and result inspectors.
+- **Phase 3 Checkpoint**: Documented milestone in `docs/checkpoints/PHASE-03.md`.
+
 ## [0.2.0] - 2026-08-15
 
 ### Added

@@ -15,6 +15,7 @@ import {
   FolderTree,
   Columns,
   LayoutGrid,
+  Sparkles,
 } from 'lucide-react';
 import type { SystemMetrics } from './types/electron';
 
@@ -60,20 +61,24 @@ export default function App() {
         e.preventDefault();
         setIsSettingsOpen((prev) => !prev);
       }
-      // Ctrl + 1, 2, 3, 4 -> Fast View Mode switching
+      // Number hotkeys for view switching
       if ((e.ctrlKey || e.metaKey) && e.key === '1') {
         e.preventDefault();
         setActiveView('overview');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '2') {
         e.preventDefault();
-        setActiveView('terminal');
+        setActiveView('ai');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '3') {
         e.preventDefault();
-        setActiveView('filesystem');
+        setActiveView('terminal');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '4') {
+        e.preventDefault();
+        setActiveView('filesystem');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === '5') {
         e.preventDefault();
         setActiveView('telemetry');
       }
@@ -95,10 +100,18 @@ export default function App() {
         action: () => setActiveView('overview'),
       },
       {
+        id: 'view-ai',
+        title: 'Focus View: AI Orchestration Studio',
+        category: 'AI',
+        shortcut: 'Ctrl+2',
+        icon: <Sparkles size={14} color="#f59e0b" />,
+        action: () => setActiveView('ai'),
+      },
+      {
         id: 'view-terminal',
         title: 'Focus View: PTY Terminal Console',
         category: 'Terminal',
-        shortcut: 'Ctrl+2',
+        shortcut: 'Ctrl+3',
         icon: <Terminal size={14} />,
         action: () => setActiveView('terminal'),
       },
@@ -106,7 +119,7 @@ export default function App() {
         id: 'view-filesystem',
         title: 'Focus View: File Explorer Matrix',
         category: 'Workspace',
-        shortcut: 'Ctrl+3',
+        shortcut: 'Ctrl+4',
         icon: <FolderTree size={14} />,
         action: () => setActiveView('filesystem'),
       },
@@ -114,9 +127,16 @@ export default function App() {
         id: 'view-telemetry',
         title: 'Focus View: Hardware Telemetry & Processes',
         category: 'System',
-        shortcut: 'Ctrl+4',
+        shortcut: 'Ctrl+5',
         icon: <Cpu size={14} />,
         action: () => setActiveView('telemetry'),
+      },
+      {
+        id: 'view-split-ai-term',
+        title: 'Split View: AI Studio + Terminal',
+        category: 'AI',
+        icon: <Columns size={14} />,
+        action: () => setActiveView('split-ai-term'),
       },
       {
         id: 'view-split-files',
@@ -124,13 +144,6 @@ export default function App() {
         category: 'Workspace',
         icon: <Columns size={14} />,
         action: () => setActiveView('split-term-fs'),
-      },
-      {
-        id: 'view-split-telemetry',
-        title: 'Split View: Terminal + Telemetry',
-        category: 'Workspace',
-        icon: <Columns size={14} />,
-        action: () => setActiveView('split-term-telem'),
       },
       {
         id: 'open-settings',

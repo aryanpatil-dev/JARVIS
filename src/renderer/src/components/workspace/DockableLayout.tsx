@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { TerminalPanel } from '../terminal/TerminalPanel';
 import { FilesystemPanel } from '../filesystem/FilesystemPanel';
 import { TelemetryPanel } from '../telemetry/TelemetryPanel';
+import { AIStudioPanel } from '../ai/AIStudioPanel';
 import {
   Terminal,
   FolderTree,
@@ -12,19 +13,29 @@ import {
 } from 'lucide-react';
 import type { SystemMetrics } from '../../types/electron';
 
-export type ViewMode = 'overview' | 'terminal' | 'filesystem' | 'telemetry' | 'split-term-fs' | 'split-term-telem';
+export type ViewMode =
+  | 'overview'
+  | 'terminal'
+  | 'filesystem'
+  | 'telemetry'
+  | 'ai'
+  | 'split-ai-term'
+  | 'split-term-fs'
+  | 'split-term-telem';
 
 interface DockableLayoutProps {
   metrics?: SystemMetrics | null;
   activeView: ViewMode;
   onViewChange: (view: ViewMode) => void;
   onOpenCommandPalette: () => void;
+  onOpenSettings: () => void;
 }
 
 export const DockableLayout = ({
   activeView,
   onViewChange,
   onOpenCommandPalette,
+  onOpenSettings,
 }: DockableLayoutProps) => {
   // Save workspace view mode to local persistence
   useEffect(() => {
@@ -48,14 +59,15 @@ export const DockableLayout = ({
         }}
       >
         {/* View Mode Switcher */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', overflowX: 'auto' }}>
           {[
             { id: 'overview', label: 'Matrix Overview', icon: <LayoutGrid size={13} /> },
+            { id: 'ai', label: 'AI Studio', icon: <Sparkles size={13} color="#f59e0b" /> },
             { id: 'terminal', label: 'PTY Terminal', icon: <Terminal size={13} /> },
             { id: 'filesystem', label: 'File Explorer', icon: <FolderTree size={13} /> },
-            { id: 'telemetry', label: 'Hardware Telemetry', icon: <Activity size={13} /> },
+            { id: 'telemetry', label: 'Telemetry', icon: <Activity size={13} /> },
+            { id: 'split-ai-term', label: 'AI + Terminal', icon: <Columns size={13} /> },
             { id: 'split-term-fs', label: 'Terminal + Files', icon: <Columns size={13} /> },
-            { id: 'split-term-telem', label: 'Terminal + Telemetry', icon: <Columns size={13} /> },
           ].map((mode) => {
             const isSelected = activeView === mode.id;
             return (
@@ -75,6 +87,7 @@ export const DockableLayout = ({
                   fontFamily: 'var(--font-mono)',
                   cursor: 'pointer',
                   transition: 'background 0.15s ease',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {mode.icon}
@@ -102,7 +115,7 @@ export const DockableLayout = ({
             }}
           >
             <Sparkles size={11} color="#38bdf8" />
-            <span>ASK JARVIS (Ctrl+K)</span>
+            <span>COMMAND CENTER (Ctrl+K)</span>
           </button>
         </div>
       </div>
@@ -111,7 +124,7 @@ export const DockableLayout = ({
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
         {activeView === 'overview' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gridTemplateRows: '1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
-            {/* Terminal Top Left */}
+            {/* Terminal Left */}
             <div style={{ gridRow: 'span 2', height: '100%' }}>
               <TerminalPanel />
             </div>
@@ -125,6 +138,12 @@ export const DockableLayout = ({
             <div style={{ height: '100%' }}>
               <TelemetryPanel />
             </div>
+          </div>
+        )}
+
+        {activeView === 'ai' && (
+          <div style={{ width: '100%', height: '100%' }}>
+            <AIStudioPanel onOpenSettings={onOpenSettings} />
           </div>
         )}
 
@@ -146,17 +165,17 @@ export const DockableLayout = ({
           </div>
         )}
 
+        {activeView === 'split-ai-term' && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
+            <AIStudioPanel onOpenSettings={onOpenSettings} />
+            <TerminalPanel />
+          </div>
+        )}
+
         {activeView === 'split-term-fs' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
             <TerminalPanel />
             <FilesystemPanel />
-          </div>
-        )}
-
-        {activeView === 'split-term-telem' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '10px', width: '100%', height: '100%' }}>
-            <TerminalPanel />
-            <TelemetryPanel />
           </div>
         )}
       </div>

@@ -3,9 +3,11 @@ import {
   DetailedSystemStats,
   FileItem,
   WorkspaceState,
+  ToolCallEvent,
+  ChatMessage,
 } from '../../shared/ipc-channels';
 
-export type { ProcessInfo, DetailedSystemStats, FileItem, WorkspaceState };
+export type { ProcessInfo, DetailedSystemStats, FileItem, WorkspaceState, ToolCallEvent, ChatMessage };
 
 export interface SystemMetrics {
   cpuModel: string;
@@ -49,6 +51,14 @@ export interface IJarvisAPI {
   workspace: {
     getState: () => Promise<WorkspaceState>;
     saveState: (state: Partial<WorkspaceState>) => Promise<boolean>;
+  };
+  ai: {
+    prompt: (prompt: string, model?: string) => Promise<void>;
+    cancel: () => Promise<void>;
+    saveKey: (key: string) => Promise<boolean>;
+    getKeyStatus: () => Promise<boolean>;
+    onStreamChunk: (callback: (event: { text: string; done?: boolean }) => void) => () => void;
+    onToolEvent: (callback: (event: ToolCallEvent) => void) => () => void;
   };
   config: {
     get: (key: string) => Promise<unknown>;
