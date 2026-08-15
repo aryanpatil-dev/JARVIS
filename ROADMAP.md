@@ -57,8 +57,9 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
   - [x] Native Windows OS Toast Notifications
   - [x] Standalone CLI Bridge & Scripting Utility (`bin/jarvis.cmd`, `bin/jarvis.ps1`)
 
-- [ ] **Phase 8: Final Polish & Release Engineering** *(NEXT)*
-  - [ ] Standalone Portable Distribution (`release/JARVIS/JARVIS.exe`)
-  - [ ] Ambient Tactical FX & Shaders
-  - [ ] Clean Machine End-to-End Verification
+- [x] **Phase 8: Final Polish & Release Engineering** *(COMPLETED)*
+  - [x] Standalone Portable Distribution (`release/JARVIS/JARVIS.exe`)
+  - [x] Ambient Tactical Grid & Canvas Particle Mesh
+  - [x] Sci-Fi Diagnostic Error Boundary & Crash Recovery
+  - [x] Clean Machine End-to-End Verification (0 TypeScript / Build Errors)
 

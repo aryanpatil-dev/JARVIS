@@ -5,6 +5,8 @@ import { CommandPalette, CommandItem } from './components/command/CommandPalette
 import { SettingsModal } from './components/settings/SettingsModal';
 import { WorkspaceShell } from './components/workspace/WorkspaceShell';
 import { ViewMode } from './components/workspace/DockableLayout';
+import { TacticalBackground } from './components/common/TacticalBackground';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { soundEffects } from './services/sound.service';
 import { voiceEngine } from './services/voice.service';
 import {
@@ -240,72 +242,78 @@ export default function App() {
   );
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        width: '100vw',
-        backgroundColor: 'var(--bg-app)',
-        color: 'var(--text-primary)',
-        position: 'relative',
-      }}
-    >
-      {/* Optional Scanlines CRT Overlay */}
-      {scanlinesEnabled && (
-        <div
-          className="scanlines-overlay"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 900,
-            pointerEvents: 'none',
-          }}
+    <ErrorBoundary>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          width: '100vw',
+          backgroundColor: 'var(--bg-app)',
+          color: 'var(--text-primary)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Dynamic Ambient Background Particle Mesh */}
+        <TacticalBackground />
+
+        {/* Optional Scanlines CRT Overlay */}
+        {scanlinesEnabled && (
+          <div
+            className="scanlines-overlay"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 900,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+
+        {/* Boot Animation */}
+        {!bootCompleted && showBootSequenceSetting && (
+          <BootSequence onComplete={() => setBootCompleted(true)} />
+        )}
+
+        {/* Tactical Titlebar with Voice Waveform HUD */}
+        <Titlebar
+          metrics={metrics}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onVoiceTranscript={handleVoiceTranscript}
         />
-      )}
 
-      {/* Boot Animation */}
-      {!bootCompleted && showBootSequenceSetting && (
-        <BootSequence onComplete={() => setBootCompleted(true)} />
-      )}
+        {/* Main Workspace Viewport */}
+        <WorkspaceShell
+          metrics={metrics}
+          securityMode={securityMode}
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          activeView={activeView}
+          onViewChange={setActiveView}
+        />
 
-      {/* Tactical Titlebar with Voice Waveform HUD */}
-      <Titlebar
-        metrics={metrics}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onVoiceTranscript={handleVoiceTranscript}
-      />
+        {/* Raycast Command Palette Modal */}
+        <CommandPalette
+          isOpen={isCommandPaletteOpen}
+          onClose={() => setIsCommandPaletteOpen(false)}
+          onSelectCommand={(cmd) => cmd.action()}
+          commands={commands}
+        />
 
-      {/* Main Workspace Viewport */}
-      <WorkspaceShell
-        metrics={metrics}
-        securityMode={securityMode}
-        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        activeView={activeView}
-        onViewChange={setActiveView}
-      />
-
-      {/* Raycast Command Palette Modal */}
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-        onSelectCommand={(cmd) => cmd.action()}
-        commands={commands}
-      />
-
-      {/* Settings Modal with API Key Config & Voice Controls */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        metrics={metrics}
-        securityMode={securityMode}
-        onSecurityModeChange={setSecurityMode}
-        showBootSequence={showBootSequenceSetting}
-        onToggleBootSequence={setShowBootSequenceSetting}
-        scanlinesEnabled={scanlinesEnabled}
-        onToggleScanlines={setScanlinesEnabled}
-      />
-    </div>
+        {/* Settings Modal with API Key Config & Voice Controls */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          metrics={metrics}
+          securityMode={securityMode}
+          onSecurityModeChange={setSecurityMode}
+          showBootSequence={showBootSequenceSetting}
+          onToggleBootSequence={setShowBootSequenceSetting}
+          scanlinesEnabled={scanlinesEnabled}
+          onToggleScanlines={setScanlinesEnabled}
+        />
+      </div>
+    </ErrorBoundary>
   );
 }

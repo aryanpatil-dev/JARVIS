@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0] - 2026-08-15
+
+### Added
+- **Tactical Ambient Canvas**: Real-time particle mesh with interactive nodes and subtle background grid.
+- **Diagnostic System Fault Recovery**: Sci-fi ErrorBoundary catching unexpected anomalies with live diagnostic log viewer.
+- **Production Standalone Release**: Fully verified distribution in `release/JARVIS/` with unblocked binaries.
+- **Milestone Completion**: All 8 development phases completed and verified with 0 TypeScript/build errors.
+
 ## [0.7.0] - 2026-08-15
 
 ### Added
