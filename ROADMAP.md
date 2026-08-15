@@ -37,14 +37,18 @@ This roadmap tracks the 8 mandatory phases defined in `gemini.md`.
   - [x] System Agent (telemetry & process management)
   - [x] Agent Hub & Mission Dispatch Interface
 
-- [ ] **Phase 5: Voice & Multimodal Interface** *(NEXT)*
-  - [ ] Speech-to-Text (STT) Audio Pipeline
-  - [ ] Text-to-Speech (TTS) Voice Synthesis
-  - [ ] Voice Activity & Waveform Audio Visualizer
-  - [ ] Tactical Sci-Fi Audio Cues & Sound FX*
-  - [ ] Short-Term Task Memory
-  - [ ] Workspace Project Context
-  - [ ] Persistent User Preferences & Durable Context
+- [x] **Phase 5: Voice & Multimodal Interface** *(COMPLETED)*
+  - [x] Speech-to-Text (STT) Audio Pipeline
+  - [x] Text-to-Speech (TTS) Voice Synthesis
+  - [x] Voice Activity & Waveform Audio Visualizer
+  - [x] Tactical Sci-Fi Audio Cues & Sound FX
+  - [x] Fullscreen launch & sleek window controls
+  - [x] Direct Gemini API Key credential configuration
+
+- [ ] **Phase 6: Memory & Workspaces** *(NEXT)*
+  - [ ] Short-Term & Long-Term Conversation Memory
+  - [ ] Workspace Project Context & Knowledge Graph
+  - [ ] Persistent User Preferences & Durable Snapshots
   - [ ] Layout State Restoration
 
 - [ ] **Phase 6: Windows Integration & CLI**

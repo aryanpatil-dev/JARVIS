@@ -1,10 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Titlebar } from './components/titlebar/Titlebar';
 import { BootSequence } from './components/boot/BootSequence';
 import { CommandPalette, CommandItem } from './components/command/CommandPalette';
 import { SettingsModal } from './components/settings/SettingsModal';
 import { WorkspaceShell } from './components/workspace/WorkspaceShell';
 import { ViewMode } from './components/workspace/DockableLayout';
+import { soundEffects } from './services/sound.service';
+import { voiceEngine } from './services/voice.service';
 import {
   Terminal,
   Settings,
@@ -17,6 +19,7 @@ import {
   LayoutGrid,
   Sparkles,
   Bot,
+  Mic,
 } from 'lucide-react';
 import type { SystemMetrics } from './types/electron';
 
@@ -49,42 +52,64 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Voice transcript handler
+  const handleVoiceTranscript = useCallback((text: string) => {
+    // Switch to AI Studio and send prompt
+    setActiveView('ai');
+    if (window.jarvisAPI?.ai) {
+      window.jarvisAPI.ai.prompt(text);
+    }
+  }, []);
+
   // Global hotkeys
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ctrl + K -> Command Palette
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
+        soundEffects.playClick();
         setIsCommandPaletteOpen((prev) => !prev);
       }
       // Ctrl + , -> Settings
       if ((e.ctrlKey || e.metaKey) && e.key === ',') {
         e.preventDefault();
+        soundEffects.playClick();
         setIsSettingsOpen((prev) => !prev);
+      }
+      // Ctrl + M -> Toggle Voice Mic
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        voiceEngine.toggleListening();
       }
       // Number hotkeys for view switching
       if ((e.ctrlKey || e.metaKey) && e.key === '1') {
         e.preventDefault();
+        soundEffects.playClick();
         setActiveView('overview');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '2') {
         e.preventDefault();
+        soundEffects.playClick();
         setActiveView('ai');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '3') {
         e.preventDefault();
+        soundEffects.playClick();
         setActiveView('agents');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '4') {
         e.preventDefault();
+        soundEffects.playClick();
         setActiveView('terminal');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '5') {
         e.preventDefault();
+        soundEffects.playClick();
         setActiveView('filesystem');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === '6') {
         e.preventDefault();
+        soundEffects.playClick();
         setActiveView('telemetry');
       }
     };
@@ -119,6 +144,14 @@ export default function App() {
         shortcut: 'Ctrl+3',
         icon: <Bot size={14} color="#38bdf8" />,
         action: () => setActiveView('agents'),
+      },
+      {
+        id: 'toggle-mic',
+        title: 'Toggle Voice Microphone Listening',
+        category: 'System',
+        shortcut: 'Ctrl+M',
+        icon: <Mic size={14} color="#10b981" />,
+        action: () => voiceEngine.toggleListening(),
       },
       {
         id: 'view-terminal',
@@ -223,8 +256,12 @@ export default function App() {
         <BootSequence onComplete={() => setBootCompleted(true)} />
       )}
 
-      {/* Tactical Titlebar */}
-      <Titlebar metrics={metrics} onOpenSettings={() => setIsSettingsOpen(true)} />
+      {/* Tactical Titlebar with Voice Waveform HUD */}
+      <Titlebar
+        metrics={metrics}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onVoiceTranscript={handleVoiceTranscript}
+      />
 
       {/* Main Workspace Viewport */}
       <WorkspaceShell
@@ -244,7 +281,7 @@ export default function App() {
         commands={commands}
       />
 
-      {/* Settings Modal */}
+      {/* Settings Modal with API Key Config & Voice Controls */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

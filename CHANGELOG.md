@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-08-15
+
+### Added
+- **Speech-to-Text & Voice Control**: Continuous Web Speech API recognition with real-time transcript streaming and auto-dispatch into AI Studio (`Ctrl+M`).
+- **Text-to-Speech Voice Engine**: Audible feedback and agent spoken narration with customizable rate and pitch.
+- **Sinusoidal Voice Waveform**: Real-time canvas visualizer embedded in the titlebar HUD.
+- **Web Audio FX Synthesizer**: Procedural sci-fi UI confirmation chirps, agent activation chords, and error pulses.
+- **Fullscreen Launch & Sleek Controls**: Auto-maximized window launch, minimalist window controls, and direct Gemini API key store in Settings.
+- **Phase 5 Checkpoint**: Documented milestone in `docs/checkpoints/PHASE-05.md`.
+
 ## [0.4.0] - 2026-08-15
 
 ### Added
