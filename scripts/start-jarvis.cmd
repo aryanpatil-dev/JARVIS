@@ -1,9 +1,12 @@
 @echo off
-title JARVIS OS Launcher
+setlocal
+cd /d "%~dp0\.."
+
+echo.
 echo ===================================================
 echo   LAUNCHING JARVIS TACTICAL AI ENVIRONMENT...
 echo ===================================================
-cd /d "%~dp0\.."
+echo.
 
-REM Launch via the trusted Electron runner directly (Bypasses Windows Smart App Control 100%)
+REM Launch via the trusted Electron runner
 npm start
